@@ -1402,6 +1402,7 @@ body.playing .reader { padding-bottom: 16rem; }
       if (!panel.hidden) return panel;
       if (!$("reader").hidden) return document;
       if ($("pIcon").classList.contains("full")) return $("pIcon");
+      if (!$("player").hidden) return $("player");
       return document;
     }
     function items(root) {
@@ -1449,6 +1450,18 @@ body.playing .reader { padding-bottom: 16rem; }
     });
     window.addEventListener("load", function () { setTimeout(function () { if (!document.activeElement || document.activeElement === document.body) go("D"); }, 300); });
   })();
+
+  /* زر الرجوع في الريموت: يغلق أعلى شيء مفتوح. يرجع true إذا أغلق شيئاً */
+  window.__tvBack = function () {
+    if (!panel.hidden) { closePanel(); return true; }
+    if (!$("reader").hidden) { closeReader(); return true; }
+    if (cur.k || !$("player").hidden) { closePlayer(); var t = $("pinZ"); if (t) t.focus(); return true; }
+    if (view !== "home") { showView("home"); var g = document.querySelector(".happ"); if (g) g.focus(); return true; }
+    return false;
+  };
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" || e.key === "GoBack" || e.key === "BrowserBack") { if (window.__tvBack()) e.preventDefault(); }
+  });
 
   /* إعدادات الأدعية */
   function buildAudioSettings() {
