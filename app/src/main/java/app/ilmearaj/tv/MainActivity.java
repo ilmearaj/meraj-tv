@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -39,7 +40,11 @@ import java.util.Set;
  */
 public class MainActivity extends Activity {
 
+    /** النسخة الداخلية (تشتغل بدون نت). */
     private static final String START_URL = "https://appassets.androidplatform.net/assets/index.html";
+    /** الصفحة على Netlify: أي تعديل تنشره يوصل التلفزيون بدون بناء جديد. */
+    private static final String REMOTE_URL = "https://classy-dasik-338077.netlify.app/";
+    private boolean fellBack = false;
 
     private WebView web;
 
@@ -67,7 +72,25 @@ public class MainActivity extends Activity {
         s.setAllowFileAccess(false);
         s.setAllowContentAccess(false);
 
+        s.setCacheMode(WebSettings.LOAD_DEFAULT);
+
         web.setWebViewClient(new WebViewClient() {
+            private void fallback(WebView view) {
+                if (fellBack) return;
+                fellBack = true;
+                view.loadUrl(START_URL);
+            }
+
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                if (request.isForMainFrame()) fallback(view);
+            }
+
+            @Override
+            public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse resp) {
+                if (request.isForMainFrame() && resp.getStatusCode() >= 400) fallback(view);
+            }
+
             @Override
             public void onPageFinished(WebView view, String url) {
                 view.requestFocus(View.FOCUS_DOWN);
@@ -84,7 +107,7 @@ public class MainActivity extends Activity {
         web.requestFocus();
 
         if (savedInstanceState == null) {
-            web.loadUrl(START_URL);
+            web.loadUrl(REMOTE_URL);
         } else {
             web.restoreState(savedInstanceState);
         }
@@ -107,6 +130,16 @@ public class MainActivity extends Activity {
     @Override
     public void onBackPressed() {
         web.evaluateJavascript("window.__tvBack && window.__tvBack();", null);
+    }
+
+    /** زر القائمة/الإعدادات بالريموت يفتح إعدادات الصفحة. */
+    @Override
+    public boolean onKeyDown(int keyCode, android.view.KeyEvent event) {
+        if (keyCode == android.view.KeyEvent.KEYCODE_MENU || keyCode == android.view.KeyEvent.KEYCODE_SETTINGS) {
+            web.evaluateJavascript("window.__tvMenu && window.__tvMenu();", null);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
@@ -169,6 +202,71 @@ public class MainActivity extends Activity {
             } catch (Exception e) {
                 return "[]";
             }
+        }
+
+        /** البنر الرسمي للتطبيق (نفس اللي يعرضه قوقل تي في)، أو فاضي إذا ما له. */
+        @JavascriptInterface
+        public String banner(String pkg) {
+            try {
+                PackageManager pm = getPackageManager();
+                Intent i = pm.getLeanbackLaunchIntentForPackage(pkg);
+                if (i == null) i = pm.getLaunchIntentForPackage(pkg);
+                Drawable d = null;
+                if (i != null) d = pm.getActivityBanner(i);
+                if (d == null) d = pm.getApplicationBanner(pkg);
+                if (d == null) return "";
+                Bitmap bm = Bitmap.createBitmap(480, 270, Bitmap.Config.ARGB_8888);
+                Canvas c = new Canvas(bm);
+                d.setBounds(0, 0, 480, 270);
+                d.draw(c);
+                ByteArrayOutputStream o = new ByteArrayOutputStream();
+                bm.compress(Bitmap.CompressFormat.JPEG, 88, o);
+                return Base64.encodeToString(o.toByteArray(), Base64.NO_WRAP);
+            } catch (Exception e) {
+                return "";
+            }
+        }
+
+        /** أيقونة التطبيق الأصلية (PNG) بحجم 160. */
+        @JavascriptInterface
+        public String icon(String pkg) {
+            try {
+                Drawable d = getPackageManager().getApplicationIcon(pkg);
+                Bitmap bm = Bitmap.createBitmap(160, 160, Bitmap.Config.ARGB_8888);
+                Canvas c = new Canvas(bm);
+                d.setBounds(0, 0, 160, 160);
+                d.draw(c);
+                ByteArrayOutputStream o = new ByteArrayOutputStream();
+                bm.compress(Bitmap.CompressFormat.PNG, 100, o);
+                return Base64.encodeToString(o.toByteArray(), Base64.NO_WRAP);
+            } catch (Exception e) {
+                return "";
+            }
+        }
+
+        @JavascriptInterface
+        public boolean installed(String pkg) {
+            try {
+                getPackageManager().getPackageInfo(pkg, 0);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+
+        @JavascriptInterface
+        public void openSettings() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Intent i = new Intent(android.provider.Settings.ACTION_SETTINGS);
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(i);
+                    } catch (Exception ignored) {
+                    }
+                }
+            });
         }
 
         @JavascriptInterface
