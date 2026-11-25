@@ -50,6 +50,9 @@ public class MainActivity extends Activity {
 
         web = new WebView(this);
         web.setBackgroundColor(0xFF04170F);
+        web.setFocusable(true);
+        web.setFocusableInTouchMode(true);
+        WebView.setWebContentsDebuggingEnabled(true);
         setContentView(web);
         hideBars();
 
@@ -65,6 +68,12 @@ public class MainActivity extends Activity {
         s.setAllowContentAccess(false);
 
         web.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                view.requestFocus(View.FOCUS_DOWN);
+                view.evaluateJavascript("window.focus();", null);
+            }
+
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 return loader.shouldInterceptRequest(request.getUrl());
@@ -91,6 +100,7 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         web.onResume();
+        web.requestFocus(View.FOCUS_DOWN);
     }
 
     @Override
@@ -102,7 +112,7 @@ public class MainActivity extends Activity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) hideBars();
+        if (hasFocus) { hideBars(); web.requestFocus(View.FOCUS_DOWN); }
     }
 
     @SuppressWarnings("deprecation")
