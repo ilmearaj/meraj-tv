@@ -103,6 +103,12 @@ public class MainActivity extends Activity {
         web.requestFocus(View.FOCUS_DOWN);
     }
 
+    /** زر الرجوع: تغلق الصفحة أعلى شيء مفتوح، وما نخرج من الهوم أبداً. */
+    @Override
+    public void onBackPressed() {
+        web.evaluateJavascript("window.__tvBack && window.__tvBack();", null);
+    }
+
     @Override
     protected void onDestroy() {
         web.destroy();
