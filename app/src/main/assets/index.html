@@ -317,6 +317,8 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
 .abox h3 { margin: 0 0 1.4rem; font-size: 2.2rem; font-family: var(--font-display); }
 .arow { display: flex; gap: .9rem; justify-content: center; flex-wrap: wrap; }
 .arow button { padding: .8rem 1.5rem; font-size: 1.5rem; border-radius: 99px; background: var(--surface); border: 1px solid var(--line); color: var(--fg); }
+.arow.col { flex-direction: column; align-items: stretch; min-width: 30rem; }
+.arow.col button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
 .arow button:disabled { opacity: .35; }
 .arow button:focus-visible { outline: none; box-shadow: 0 0 0 .2rem var(--accent); transform: scale(1.06); }
 .wx { inset-inline-start: auto; left: auto; right: 6rem; top: 1.3rem; height: 3.4rem; padding: 0 1.2rem; }
@@ -489,13 +491,15 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
         <button class="btn ghost" id="rMinus" type="button" aria-label="تصغير الخط">أ−</button>
         <button class="btn ghost" id="rPlus" type="button" aria-label="تكبير الخط">أ+</button>
         <button class="btn ghost" id="rSync" type="button" aria-pressed="true" hidden>مع الصوت</button>
+        <button class="btn ghost" id="rUp" type="button" aria-label="للأعلى">▲</button>
+        <button class="btn ghost" id="rDown" type="button" aria-label="للأسفل">▼</button>
         <button class="btn ghost" id="rAuto" type="button" aria-pressed="false">تمرير تلقائي</button>
         <button class="btn ghost" id="rSlow" type="button">أبطأ</button>
         <button class="btn ghost" id="rFast" type="button">أسرع</button>
         <button class="btn" id="rClose" type="button">إغلاق</button>
       </div>
     </div>
-    <div class="r-body" id="rBody" tabindex="0"><div class="r-text" id="rText"></div></div>
+    <div class="r-body" id="rBody"><div class="r-text" id="rText"></div></div>
   </section>
 
   <section class="player" id="player" hidden aria-label="مشغّل الدعاء">
@@ -518,6 +522,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
 <button class="gear" id="gear" type="button" aria-label="تخصيص الصفحة" title="تخصيص الصفحة">🎨</button>
 <button class="sysbtn" id="sysBtn" type="button" hidden aria-label="إعدادات التلفاز" title="إعدادات التلفاز">⚙</button>
 <div class="amenu" id="appMenu" hidden role="dialog" aria-modal="true" dir="rtl"><div class="abox"><h3 id="amName"></h3><div class="arow"><button type="button" data-a="prev">→ تقديم</button><button type="button" data-a="next">تأخير ←</button><button type="button" data-a="del">إزالة</button><button type="button" data-a="close">تم</button></div></div></div>
+<div class="amenu" id="vMenu" hidden role="dialog" aria-modal="true" dir="rtl"><div class="abox"><h3>اختر القارئ</h3><div class="arow col" id="vList"></div></div></div>
 
 <div class="panel" id="panel" hidden dir="rtl" lang="ar" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
   <div class="sheet">
@@ -1288,9 +1293,8 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     applyPhotos(box);
     $("pTitle").textContent = d.name;
     $("pSub").textContent = cur.i >= 0 ? d.voices[cur.i].n : "";
-    var h = "";
-    d.voices.forEach(function (x, i) { if (x.ok === false) return; h += "<button class=\"vchip\" type=\"button\" data-i=\"" + i + "\" aria-pressed=\"" + (i === cur.i) + "\">" + x.n + "</button>"; });
-    $("pVoices").innerHTML = h;
+    var nv = 0; d.voices.forEach(function (x) { if (x.ok !== false) nv++; });
+    $("pVoices").innerHTML = nv > 1 ? "<button class=\"vchip\" id=\"pVoiceBtn\" type=\"button\">القارئ: " + (vv ? vv.n : "—") + " ▾</button>" : "";
     syncPlayBtn();
   }
   function startPlayback(k, i) {
@@ -1353,11 +1357,22 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     var box = $("pIcon");
     if (box.classList.contains("full") && (e.key === "Escape" || e.key === "GoBack" || e.keyCode === 4)) { var m = box.querySelector("[data-a=min]"); if (m) m.click(); e.preventDefault(); }
   });
+  function closeVMenu(focus) { $("vMenu").hidden = true; if (focus) { var b = $("pVoiceBtn"); if (b) b.focus(); } }
   $("pVoices").addEventListener("click", function (e) {
-    var b = e.target.closest(".vchip"); if (!b || !cur.k) return;
-    var i = parseInt(b.dataset.i, 10);
-    state.voice[cur.k] = i; state.rotate = false; save(); syncAudioSettings();
-    startPlayback(cur.k, i);
+    if (!e.target.closest("#pVoiceBtn") || !cur.k) return;
+    var d = DUAS[cur.k], h = "";
+    d.voices.forEach(function (x, i) { if (x.ok === false) return; h += "<button type=\"button\" data-i=\"" + i + "\" aria-pressed=\"" + (i === cur.i) + "\">" + x.n + "</button>"; });
+    $("vList").innerHTML = h; $("vMenu").hidden = false;
+    var f = $("vList").querySelector("[aria-pressed=true]") || $("vList").querySelector("button"); if (f) f.focus();
+  });
+  $("vMenu").addEventListener("click", function (e) {
+    if (e.target === $("vMenu")) { closeVMenu(true); return; }
+    var b = e.target.closest("button[data-i]"); if (!b || !cur.k) return;
+    var i = parseInt(b.dataset.i, 10), k = cur.k;
+    state.voice[k] = i; state.rotate = false; save(); syncAudioSettings();
+    closeVMenu(false);
+    startPlayback(k, i);
+    var nb = $("pVoiceBtn"); if (nb) nb.focus();
   });
   audio.addEventListener("play", syncPlayBtn);
   audio.addEventListener("pause", syncPlayBtn);
@@ -1677,16 +1692,18 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
   $("rSlow").addEventListener("click", function () { state.rspeed = Math.max(8, state.rspeed - 6); save(); });
   $("rFast").addEventListener("click", function () { state.rspeed = Math.min(120, state.rspeed + 6); save(); });
   $("pRead").addEventListener("click", function () { if (cur.k) openReader(cur.k); });
-  document.addEventListener("keydown", function (e) {
-    if ($("reader").hidden) return;
-    if (e.key === "Escape") { closeReader(); return; }
+  function manualScroll(dy) {
     var b = $("rBody");
-    if (rd.sync && filePlaying() && (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "PageDown" || e.key === "PageUp") && document.activeElement === b) { rd.sync = false; syncBtn(); }
-    if (e.key === "ArrowDown") { b.scrollTop += 140; e.preventDefault(); }
-    else if (e.key === "ArrowUp" && b.scrollTop > 0) { b.scrollTop -= 140; e.preventDefault(); }
-    else if (e.key === "PageDown") { b.scrollTop += b.clientHeight * 0.9; }
-    else if (e.key === "PageUp") { b.scrollTop -= b.clientHeight * 0.9; }
-    rd.acc = b.scrollTop;
+    if (rd.sync && filePlaying()) { rd.sync = false; syncBtn(); }
+    b.scrollTop += dy; rd.acc = b.scrollTop; rd.pos = b.scrollTop;
+  }
+  $("rUp").addEventListener("click", function () { manualScroll(-$("rBody").clientHeight * 0.5); });
+  $("rDown").addEventListener("click", function () { manualScroll($("rBody").clientHeight * 0.5); });
+  document.addEventListener("keydown", function (e) {
+    if ($("reader").hidden || !$("vMenu").hidden) return;
+    if (e.key === "Escape") { closeReader(); return; }
+    if (e.key === "PageDown") manualScroll($("rBody").clientHeight * 0.9);
+    else if (e.key === "PageUp") manualScroll(-$("rBody").clientHeight * 0.9);
   });
 
 
@@ -1694,6 +1711,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
   (function () {
     var SEL = "button:not([disabled]), a[href], [tabindex=\"0\"]:not(#rBody)";
     function scope() {
+      if (!$("vMenu").hidden) return $("vMenu");
       if (!$("appMenu").hidden) return $("appMenu");
       if (!panel.hidden) return panel;
       if (!$("reader").hidden) return document;
@@ -1723,16 +1741,18 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
         return false;
       }
       var cx = cur.r.left + cur.r.width / 2, cy = cur.r.top + cur.r.height / 2, best = null, bs = 1e12;
-      for (i = 0; i < list.length; i++) {
-        var c = list[i]; if (c === cur) continue;
-        var x = c.r.left + c.r.width / 2, y = c.r.top + c.r.height / 2, dx = x - cx, dy = y - cy, main, side, ov;
-        if (dir === "L") { if (dx >= -2) continue; main = -dx; side = Math.abs(dy); ov = Math.min(cur.r.bottom, c.r.bottom) - Math.max(cur.r.top, c.r.top); }
-        else if (dir === "R") { if (dx <= 2) continue; main = dx; side = Math.abs(dy); ov = Math.min(cur.r.bottom, c.r.bottom) - Math.max(cur.r.top, c.r.top); }
-        else if (dir === "U") { if (dy >= -2) continue; main = -dy; side = Math.abs(dx); ov = Math.min(cur.r.right, c.r.right) - Math.max(cur.r.left, c.r.left); }
-        else { if (dy <= 2) continue; main = dy; side = Math.abs(dx); ov = Math.min(cur.r.right, c.r.right) - Math.max(cur.r.left, c.r.left); }
-        if (ov <= 0 && side > main * 1.2) continue;
-        var sc = main + side * 2.5 + (ov > 0 ? 0 : 400);
-        if (sc < bs) { bs = sc; best = c; }
+      for (var pass = 0; pass < 2 && !best; pass++) {
+        for (i = 0; i < list.length; i++) {
+          var c = list[i]; if (c === cur) continue;
+          var x = c.r.left + c.r.width / 2, y = c.r.top + c.r.height / 2, dx = x - cx, dy = y - cy, main, side, ov;
+          if (dir === "L") { if (dx >= -2) continue; main = -dx; side = Math.abs(dy); ov = Math.min(cur.r.bottom, c.r.bottom) - Math.max(cur.r.top, c.r.top); }
+          else if (dir === "R") { if (dx <= 2) continue; main = dx; side = Math.abs(dy); ov = Math.min(cur.r.bottom, c.r.bottom) - Math.max(cur.r.top, c.r.top); }
+          else if (dir === "U") { if (dy >= -2) continue; main = -dy; side = Math.abs(dx); ov = Math.min(cur.r.right, c.r.right) - Math.max(cur.r.left, c.r.left); }
+          else { if (dy <= 2) continue; main = dy; side = Math.abs(dx); ov = Math.min(cur.r.right, c.r.right) - Math.max(cur.r.left, c.r.left); }
+          if (pass === 0 && ov <= 0 && side > main * 1.2) continue;
+          var sc = main + side * 2.5 + (ov > 0 ? 0 : 400);
+          if (sc < bs) { bs = sc; best = c; }
+        }
       }
       if (!best) return false;
       best.el.focus({ preventScroll: true });
@@ -1750,6 +1770,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
   /* زر الرجوع في الريموت: يغلق أعلى شيء مفتوح. يرجع true إذا أغلق شيئاً */
   window.__tvBack = function () {
     if (saverOn) { stopSaver(); return true; }
+    if (!$("vMenu").hidden) { closeVMenu(true); return true; }
     if (!$("appMenu").hidden) { closeAppMenu(); return true; }
     if (!panel.hidden) { closePanel(); return true; }
     if (!$("reader").hidden) { closeReader(); return true; }
