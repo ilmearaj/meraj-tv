@@ -822,7 +822,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
   }
 
   /* الذكر المتغيّر */
-  var di = 0, DUR = 25;
+  var di = 0, dTimer = 0;
   function pool() {
     var n = new Date(), hr = n.getHours(), dow = n.getDay();
     var items = [], set, tag;
@@ -850,12 +850,15 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
       var bar = $("dBar");
       bar.style.animation = "none";
       void bar.offsetWidth;
+      var secs = Math.round(Math.max(35, Math.min(100, 30 + (it.t.length + (it.n ? it.n.length : 0) + (it.s ? it.s.length : 0)) * 0.3)));
+      bar.style.setProperty("--dur", secs + "s");
       bar.style.animation = "";
+      clearTimeout(dTimer); dTimer = setTimeout(nextDhikr, secs * 1000);
     };
     if (first) apply();
     else { box.classList.add("swap"); setTimeout(apply, 450); }
   }
-  function nextDhikr() { if (occasion()) return; di += 1; showDhikr(false); }
+  function nextDhikr() { if (occasion()) { clearTimeout(dTimer); dTimer = setTimeout(nextDhikr, 30000); return; } di += 1; showDhikr(false); }
   /* المناسبات: ثيمة سوداء للمصاب وتهنئة للمولد والعيد، من مغرب الليلة السابقة حتى مغرب يوم المناسبة */
   var OCC_PREV = null;
   function occasion() {
@@ -2232,7 +2235,6 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
   showDhikr(true);
   setInterval(renderClock, 1000);
   setInterval(renderDate, 30000);
-  setInterval(nextDhikr, DUR * 1000);
 })();
 </script>
 
