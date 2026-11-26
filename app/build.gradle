@@ -14,6 +14,16 @@ android {
         versionName "1.0.0"
     }
 
+    // مفتاح توقيع ثابت: يسمح بالتحديث فوق النسخة القديمة (adb install -r) بدون مسح الإعدادات
+    signingConfigs {
+        debug {
+            storeFile file('meraj.keystore')
+            storePassword 'meraj-tv-2026'
+            keyAlias 'meraj'
+            keyPassword 'meraj-tv-2026'
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
