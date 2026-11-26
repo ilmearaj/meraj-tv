@@ -444,6 +444,45 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
 :root[data-ui="b"] .events, :root[data-ui="b"] .dhikr { border-radius: .6rem; border-color: color-mix(in srgb, var(--gold) 45%, transparent); }
 :root[data-ui="b"] .chip { border-radius: .25rem; background: var(--gold); color: #1a1405; }
 :root[data-ui="b"] .gear { border-radius: .45rem; border-color: var(--gold); }
+
+/* شكل الواجهة (ج): زجاجي */
+:root[data-ui="c"] .tile, :root[data-ui="c"] .happ { border-radius: 2rem; border: 1px solid rgba(255, 255, 255, .35); backdrop-filter: blur(10px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 .6rem 1.6rem rgba(0, 0, 0, .3); }
+:root[data-ui="c"] .happ { background: rgba(255, 255, 255, .1); }
+:root[data-ui="c"] .tile .ic { width: 3rem; height: 3rem; padding: .6rem; border-radius: 50%; background: rgba(255, 255, 255, .22); border: 1px solid rgba(255, 255, 255, .45); backdrop-filter: blur(6px); }
+:root[data-ui="c"] .happ i { border-radius: 50%; background-image: linear-gradient(rgba(255,255,255,.18), rgba(255,255,255,0)); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .5), 0 .3rem 1rem rgba(0, 0, 0, .3); }
+:root[data-ui="c"] .badge { background: rgba(255, 255, 255, .85); color: #10231a; }
+:root[data-ui="c"] .btn { border-radius: 99px; background: rgba(255, 255, 255, .16); color: var(--fg); border: 1px solid rgba(255, 255, 255, .45); backdrop-filter: blur(8px); }
+:root[data-ui="c"] .btn.ghost { background: rgba(255, 255, 255, .08); }
+:root[data-ui="c"] .btn:focus-visible { background: rgba(255, 255, 255, .85); color: #10231a; outline: none; }
+:root[data-ui="c"] .pr, :root[data-ui="c"] .events, :root[data-ui="c"] .dhikr { border-radius: 1.6rem; background: rgba(255, 255, 255, .07); border-color: rgba(255, 255, 255, .28); }
+:root[data-ui="c"] .tile.today { box-shadow: 0 0 0 2px rgba(255, 255, 255, .9), 0 .6rem 2rem var(--glow1); }
+:root[data-ui="c"] .tile:focus-visible, :root[data-ui="c"] .happ:focus-visible { box-shadow: 0 0 0 4px #fff, 0 1rem 2.4rem rgba(0, 0, 0, .45); }
+/* (د): مسطّح جريء */
+:root[data-ui="d"] .tile, :root[data-ui="d"] .happ { border-radius: .7rem; border: 0; box-shadow: none; }
+:root[data-ui="d"] .tile::after { background: linear-gradient(to top, rgba(0, 0, 0, .85), rgba(0, 0, 0, .15) 75%); }
+:root[data-ui="d"] .happ { background: var(--accent); color: var(--accent-ink); flex-direction: row; gap: 1rem; font-weight: 700; }
+:root[data-ui="d"] .happ i { width: 4.2rem; height: 4.2rem; border-radius: 50%; background: rgba(0, 0, 0, .78) !important; color: #fff; box-shadow: none; font-size: 2.2rem; }
+:root[data-ui="d"] .tile .ic { width: 3.2rem; height: 3.2rem; padding: .7rem; border-radius: .5rem; background: var(--accent); color: var(--accent-ink); opacity: 1; }
+:root[data-ui="d"] .badge { border-radius: .4rem; font-size: 1.05rem; }
+:root[data-ui="d"] .btn, :root[data-ui="d"] .btn.ghost { border-radius: .5rem; border: 0; background: var(--accent); color: var(--accent-ink); font-weight: 700; }
+:root[data-ui="d"] .btn.ghost { background: rgba(255, 255, 255, .16); color: var(--fg); }
+:root[data-ui="d"] .seg button, :root[data-ui="d"] .vchip, :root[data-ui="d"] .rcb, :root[data-ui="d"] .arow button { border-radius: .5rem; border: 0; background: rgba(255, 255, 255, .14); }
+:root[data-ui="d"] .seg button[aria-pressed="true"], :root[data-ui="d"] .arow button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+:root[data-ui="d"] .pr { border-radius: .5rem; border: 0; background: rgba(255, 255, 255, .12); }
+:root[data-ui="d"] .events, :root[data-ui="d"] .dhikr { border-radius: .8rem; border: 0; }
+:root[data-ui="d"] .tile:focus-visible, :root[data-ui="d"] .happ:focus-visible, :root[data-ui="d"] .btn:focus-visible { box-shadow: 0 0 0 5px #fff; transform: scale(1.04); outline: none; }
+/* (هـ): محراب */
+:root[data-ui="e"] .tile, :root[data-ui="e"] .happ { border-radius: 4.5rem 4.5rem .8rem .8rem; border: 1px solid color-mix(in srgb, var(--accent) 70%, transparent); }
+:root[data-ui="e"] .tile { padding-top: 1.2rem; align-items: center; text-align: center; }
+:root[data-ui="e"] .tile .ic { inset-inline-start: 50%; transform: translateX(50%); width: 2.8rem; height: 2.8rem; padding: .5rem; border-radius: 50%; border: 2px solid var(--accent); background: rgba(0, 0, 0, .35); inset-block-start: .8rem; }
+:root[data-ui="e"] .badge { inset-block-start: auto; inset-block-end: .7rem; inset-inline-end: .8rem; }
+:root[data-ui="e"] .happ { background: transparent; }
+:root[data-ui="e"] .happ i { border-radius: 50%; box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 70%, transparent), 0 .3rem 1rem rgba(0, 0, 0, .35); }
+:root[data-ui="e"] .btn, :root[data-ui="e"] .btn.ghost { border-radius: 99px 99px .5rem .5rem; }
+:root[data-ui="e"] .seg button, :root[data-ui="e"] .vchip, :root[data-ui="e"] .rcb { border-radius: 1.2rem 1.2rem .4rem .4rem; }
+:root[data-ui="e"] .pr { border-radius: 1.6rem 1.6rem .4rem .4rem; }
+:root[data-ui="e"] .events, :root[data-ui="e"] .dhikr { border-radius: 2.4rem 2.4rem 1rem 1rem; }
+:root[data-ui="e"] .tile:focus-visible, :root[data-ui="e"] .happ:focus-visible { box-shadow: 0 0 0 4px var(--accent), 0 1rem 2.4rem rgba(0, 0, 0, .5); }
 </style>
 </head>
 <body>
@@ -554,7 +593,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     <h2 id="panelTitle">تخصيص الشاشة</h2>
     <div>
       <h3>شكل الأزرار والأيقونات</h3>
-      <div class="seg" id="uiSeg"><button type="button" data-u="">الحالي (دائري)</button><button type="button" data-u="b">زخرفي (إطار ذهبي ونجوم)</button></div>
+      <div class="seg" id="uiSeg"><button type="button" data-u="">١ الحالي (دائري)</button><button type="button" data-u="b">٢ زخرفي ذهبي</button><button type="button" data-u="c">٣ زجاجي</button><button type="button" data-u="d">٤ مسطّح جريء</button><button type="button" data-u="e">٥ محراب</button></div>
     </div>
     <div>
       <h3>اللون</h3>
@@ -737,7 +776,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
   try {
     var saved = JSON.parse(localStorage.getItem("tv-hijri") || "{}");
     if (saved.palette) state.palette = saved.palette;
-    if (saved.ui === "b") state.ui = "b";
+    if (/^[bcde]$/.test(saved.ui)) state.ui = saved.ui;
     if (saved.ptune) for (var tk in state.ptune) if (typeof saved.ptune[tk] === "number" && Math.abs(saved.ptune[tk]) <= 30) state.ptune[tk] = Math.round(saved.ptune[tk]);
     if (typeof saved.offset === "number") state.offset = saved.offset;
     if (saved.auto) for (var ak in state.auto) if (typeof saved.auto[ak] === "boolean") state.auto[ak] = saved.auto[ak];
@@ -771,9 +810,9 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
   function save() { try { localStorage.setItem("tv-hijri", JSON.stringify(state)); } catch (e) {} }
 
   function applyUI() {
-    if (state.ui === "b") document.documentElement.setAttribute("data-ui", "b"); else document.documentElement.removeAttribute("data-ui");
+    if (state.ui) document.documentElement.setAttribute("data-ui", state.ui); else document.documentElement.removeAttribute("data-ui");
     var u = document.querySelectorAll("#uiSeg button");
-    for (var i = 0; i < u.length; i++) u[i].setAttribute("aria-pressed", String((u[i].dataset.u === "b") === (state.ui === "b")));
+    for (var i = 0; i < u.length; i++) u[i].setAttribute("aria-pressed", String(u[i].dataset.u === state.ui));
   }
   function applyPalette() {
     if (state.palette === "green") document.documentElement.removeAttribute("data-palette");
