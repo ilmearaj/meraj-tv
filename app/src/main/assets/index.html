@@ -421,6 +421,29 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
 .events .picks .tile .ic { width: 1.7rem; height: 1.7rem; }
 .events .picks .tile .badge { font-size: .8rem; padding: .05rem .5rem; }
 .happ span:not(.en) { font-size: 1.5rem; white-space: normal; text-align: center; line-height: 1.2; }
+
+/* شكل الواجهة (ب): زخرفي بإطارات ذهبية رفيعة وأيقونات داخل نجمة */
+:root[data-ui="b"] { --gold: #e8c36a; }
+:root[data-ui="b"] .tile { border-radius: .45rem; border: 1px solid color-mix(in srgb, var(--gold) 70%, transparent); }
+:root[data-ui="b"] .tile::before { content: ""; position: absolute; inset: .4rem; z-index: 0; border: 1px solid color-mix(in srgb, var(--gold) 45%, transparent); border-radius: .25rem; pointer-events: none; }
+:root[data-ui="b"] .tile .ic { width: 2.6rem; height: 2.6rem; padding: .5rem; background: var(--gold); color: #1a1405; opacity: 1; clip-path: polygon(50% 0, 62% 14%, 80% 8%, 86% 26%, 100% 38%, 90% 54%, 98% 72%, 80% 78%, 72% 96%, 54% 88%, 38% 100%, 30% 82%, 10% 80%, 14% 62%, 0 46%, 14% 32%, 14% 12%, 34% 14%); inset-block-start: .9rem; inset-inline-start: 1rem; }
+:root[data-ui="b"] .tile b { letter-spacing: .01em; }
+:root[data-ui="b"] .badge { border-radius: .25rem; background: var(--gold); color: #1a1405; inset-block-start: .9rem; inset-inline-end: 1rem; }
+:root[data-ui="b"] .tile.today { box-shadow: 0 0 0 2px var(--gold), 0 .5rem 2rem var(--glow1); }
+:root[data-ui="b"] .tile:focus-visible { transform: scale(1.03); box-shadow: 0 0 0 4px var(--gold), 0 1rem 2.4rem rgba(0, 0, 0, .5); }
+:root[data-ui="b"] .happ { border-radius: .45rem; background: transparent; border: 1px solid color-mix(in srgb, var(--gold) 70%, transparent); position: relative; }
+:root[data-ui="b"] .happ::before { content: ""; position: absolute; inset: .35rem; border: 1px solid color-mix(in srgb, var(--gold) 35%, transparent); border-radius: .25rem; pointer-events: none; }
+:root[data-ui="b"] .happ i { border-radius: 0; clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%); box-shadow: none; }
+:root[data-ui="b"] .happ:focus-visible { box-shadow: 0 0 0 4px var(--gold), 0 .6rem 2rem var(--glow1); background: color-mix(in srgb, var(--gold) 12%, transparent); }
+:root[data-ui="b"] .btn { border-radius: .3rem; background: transparent; color: var(--gold); border: 2px solid var(--gold); }
+:root[data-ui="b"] .btn.ghost { color: var(--fg); border-color: color-mix(in srgb, var(--gold) 45%, transparent); background: transparent; }
+:root[data-ui="b"] .btn:focus-visible, :root[data-ui="b"] .btn.ghost:focus-visible { background: var(--gold); color: #1a1405; outline: none; }
+:root[data-ui="b"] .seg button, :root[data-ui="b"] .vchip, :root[data-ui="b"] .rcb, :root[data-ui="b"] .arow button { border-radius: .3rem; background: transparent; border-color: color-mix(in srgb, var(--gold) 45%, transparent); }
+:root[data-ui="b"] .seg button[aria-pressed="true"], :root[data-ui="b"] .arow button[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); background: color-mix(in srgb, var(--gold) 14%, transparent); }
+:root[data-ui="b"] .pr { border-radius: .3rem; background: transparent; border-color: color-mix(in srgb, var(--gold) 45%, transparent); }
+:root[data-ui="b"] .events, :root[data-ui="b"] .dhikr { border-radius: .6rem; border-color: color-mix(in srgb, var(--gold) 45%, transparent); }
+:root[data-ui="b"] .chip { border-radius: .25rem; background: var(--gold); color: #1a1405; }
+:root[data-ui="b"] .gear { border-radius: .45rem; border-color: var(--gold); }
 </style>
 </head>
 <body>
@@ -529,6 +552,10 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
 <div class="panel" id="panel" hidden dir="rtl" lang="ar" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
   <div class="sheet">
     <h2 id="panelTitle">تخصيص الشاشة</h2>
+    <div>
+      <h3>شكل الأزرار والأيقونات</h3>
+      <div class="seg" id="uiSeg"><button type="button" data-u="">الحالي (دائري)</button><button type="button" data-u="b">زخرفي (إطار ذهبي ونجوم)</button></div>
+    </div>
     <div>
       <h3>اللون</h3>
       <div class="swatches" id="swatches"></div>
@@ -706,10 +733,11 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     ["green", "زمردي", "#4fd1a5"], ["blue", "أزرق", "#6ea8ff"], ["maroon", "عنابي", "#e0707f"],
     ["violet", "بنفسجي", "#b69cff"], ["gold", "ذهبي", "#e3b54a"], ["light", "فاتح", "#ffffff"]
   ];
-  var state = { ptune: { Fajr: 0, Sunrise: 0, Dhuhr: 0, Maghrib: 0, Isha: 0, Midnight: 0 }, palette: "green", offset: 0, auto: { sabah: true, nudba: true, kumayl: false }, morning: 360, night: 1200, rotate: true, voice: {}, start: "home", liveSound: false, readWith: true, loc: { c: "KW", i: 0 }, pmethod: "jafari", adhan: { on: true, voice: 0, pr: { Fajr: false, Dhuhr: true, Maghrib: true, Isha: true }, pre: 0 }, rfont: 2.6, rspeed: 24, homeApps: null, speed: 1, saver: { on: true, after: 300, every: 30 }, bg: { mode: "fixed", every: 60 } };
+  var state = { ptune: { Fajr: 0, Sunrise: 0, Dhuhr: 0, Maghrib: 0, Isha: 0, Midnight: 0 }, palette: "green", ui: "", offset: 0, auto: { sabah: true, nudba: true, kumayl: false }, morning: 360, night: 1200, rotate: true, voice: {}, start: "home", liveSound: false, readWith: true, loc: { c: "KW", i: 0 }, pmethod: "jafari", adhan: { on: true, voice: 0, pr: { Fajr: false, Dhuhr: true, Maghrib: true, Isha: true }, pre: 0 }, rfont: 2.6, rspeed: 24, homeApps: null, speed: 1, saver: { on: true, after: 300, every: 30 }, bg: { mode: "fixed", every: 60 } };
   try {
     var saved = JSON.parse(localStorage.getItem("tv-hijri") || "{}");
     if (saved.palette) state.palette = saved.palette;
+    if (saved.ui === "b") state.ui = "b";
     if (saved.ptune) for (var tk in state.ptune) if (typeof saved.ptune[tk] === "number" && Math.abs(saved.ptune[tk]) <= 30) state.ptune[tk] = Math.round(saved.ptune[tk]);
     if (typeof saved.offset === "number") state.offset = saved.offset;
     if (saved.auto) for (var ak in state.auto) if (typeof saved.auto[ak] === "boolean") state.auto[ak] = saved.auto[ak];
@@ -742,6 +770,11 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
   } catch (e) {}
   function save() { try { localStorage.setItem("tv-hijri", JSON.stringify(state)); } catch (e) {} }
 
+  function applyUI() {
+    if (state.ui === "b") document.documentElement.setAttribute("data-ui", "b"); else document.documentElement.removeAttribute("data-ui");
+    var u = document.querySelectorAll("#uiSeg button");
+    for (var i = 0; i < u.length; i++) u[i].setAttribute("aria-pressed", String((u[i].dataset.u === "b") === (state.ui === "b")));
+  }
   function applyPalette() {
     if (state.palette === "green") document.documentElement.removeAttribute("data-palette");
     else document.documentElement.setAttribute("data-palette", state.palette);
@@ -952,7 +985,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     state.ptune[k] = Math.max(-30, Math.min(30, v)); save(); retune(); buildTune();
     var nb = $("tune").querySelector("[data-k=\"" + k + "\"] [data-d=\"" + b.dataset.d + "\"]"); if (nb) nb.focus();
   });
-  function openPanel() { buildTune(); buildReciters(); panel.hidden = false; markOffsets(); applyPalette(); var f = panel.querySelector(".sw"); if (f) f.focus(); }
+  function openPanel() { buildTune(); buildReciters(); panel.hidden = false; markOffsets(); applyPalette(); applyUI(); var f = panel.querySelector(".sw"); if (f) f.focus(); }
   function closePanel() { panel.hidden = true; $("gear").focus(); }
   $("gear").addEventListener("click", openPanel);
   $("close").addEventListener("click", closePanel);
@@ -2247,6 +2280,8 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
   setInterval(tick, 20000);
   setTimeout(tick, 3000);
   applyPalette();
+  applyUI();
+  $("uiSeg").addEventListener("click", function (e) { var b = e.target.closest("button"); if (!b) return; state.ui = b.dataset.u; save(); applyUI(); });
   renderClock();
   renderDate();
   showDhikr(true);
