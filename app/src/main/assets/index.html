@@ -202,9 +202,12 @@ body.playing .view { padding-bottom: 16rem; }
 .happ span { min-width: 0; white-space: nowrap; }
 .happ:focus-visible { transform: scale(1.05); box-shadow: 0 0 0 3px var(--accent), 0 .6rem 2rem var(--glow1); outline: none; background: var(--surface2); }
 .events .list li:nth-child(n+3) { display: none; }
+.view.apps { padding: 1.6rem 2.5rem; }
+.view.apps .view-head { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; margin-bottom: 1.2rem; }
 .apps-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1.1rem; padding-bottom: 2rem; }
 .app-btn { display: flex; flex-direction: column; align-items: center; gap: .7rem; padding: 1.2rem .6rem; background: var(--surface); border: 1px solid var(--line); border-radius: 1.2rem; color: var(--fg); font-size: 1.1rem; text-align: center; }
-.app-btn img { width: 4.6rem; height: 4.6rem; border-radius: 1rem; }
+.app-btn img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 1rem; background: #111; }
+.app-btn img.ic { width: 4.6rem; aspect-ratio: auto; object-fit: contain; margin: .5rem 0; background: none; }
 .app-btn span { min-width: 0; overflow-wrap: anywhere; }
 .app-btn:focus-visible { transform: scale(1.04); box-shadow: 0 0 0 3px var(--accent); outline: none; background: var(--surface2); }
 .yt-btns { position: absolute; top: .8rem; left: .8rem; z-index: 2; display: flex; gap: .6rem; }
@@ -304,6 +307,28 @@ body.playing .reader { padding-bottom: 16rem; }
 .hijri-rest { flex-direction: row; gap: .7rem; align-items: baseline; }
 .greg { font-size: 1.3rem; padding: 0; }
 .gear { width: 3.4rem; height: 3.4rem; padding: 0; display: grid; place-items: center; font-size: 1.7rem; border-radius: 50%; opacity: 1; color: var(--fg); inset-inline-end: auto; inset-block-start: 1.3rem; right: 1.6rem; left: auto; }
+.sysbtn { position: fixed; top: 1.3rem; right: 1.6rem; z-index: 5; width: 3.4rem; height: 3.4rem; padding: 0; display: grid; place-items: center; font-size: 1.7rem; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 50%; }
+.sysbtn[hidden] { display: none; }
+body.has-sys .gear { right: 6rem; }
+body.has-sys .wx { right: 10.4rem; }
+body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
+.sysbtn:focus-visible, .gear:focus-visible { outline: none; box-shadow: 0 0 0 .2rem var(--accent); }
+.homeapps { position: relative; }
+.hedit { position: absolute; left: .4rem; top: -.2rem; width: 3.2rem; height: 3.2rem; padding: 0; display: grid; place-items: center; border-radius: 50%; font-size: 1.5rem; color: var(--fg); background: var(--surface); border: 1px solid var(--line); }
+.hedit:focus-visible { outline: none; box-shadow: 0 0 0 .2rem var(--accent); transform: scale(1.1); }
+.homeapps.editing::before { content: "التطبيقات · اختر تطبيقاً لتقديمه أو تأخيره أو إزالته"; color: var(--accent); }
+.homeapps.editing .happ:not(.add) { outline: .15rem dashed rgba(255, 255, 255, .55); outline-offset: -.3rem; }
+.happ u { position: absolute; top: .5rem; left: .6rem; text-decoration: none; font-size: 1.2rem; background: rgba(0, 0, 0, .55); color: #fff; border-radius: 99px; width: 2rem; height: 2rem; display: grid; place-items: center; }
+.homeapps .happ { position: relative; }
+.happ.add { background: transparent; border: .15rem dashed var(--line); box-shadow: none; color: var(--muted); }
+.amenu { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; background: rgba(0, 0, 0, .6); }
+.amenu[hidden] { display: none; }
+.abox { background: color-mix(in srgb, var(--bg) 88%, #fff); border: 1px solid var(--line); border-radius: 1.6rem; padding: 2rem 2.4rem; min-width: 38rem; text-align: center; box-shadow: 0 1rem 3rem rgba(0, 0, 0, .5); }
+.abox h3 { margin: 0 0 1.4rem; font-size: 2.2rem; font-family: var(--font-display); }
+.arow { display: flex; gap: .9rem; justify-content: center; flex-wrap: wrap; }
+.arow button { padding: .8rem 1.5rem; font-size: 1.5rem; border-radius: 99px; background: var(--surface); border: 1px solid var(--line); color: var(--fg); }
+.arow button:disabled { opacity: .35; }
+.arow button:focus-visible { outline: none; box-shadow: 0 0 0 .2rem var(--accent); transform: scale(1.06); }
 .wx { inset-inline-start: auto; left: auto; right: 6rem; top: 1.3rem; height: 3.4rem; padding: 0 1.2rem; }
 
 .dhikr { order: 0; grid-column: auto; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 1.2rem; padding: .5rem 1.4rem .7rem; border-radius: 1.4rem; background: var(--surface); }
@@ -324,7 +349,7 @@ body.playing .reader { padding-bottom: 16rem; }
 .events .pr { justify-content: center; }
 .row-title, .events::before, .homeapps::before { grid-column: 1 / -1; }
 .events::before { content: "اليوم"; font-family: var(--font-display); font-size: 1.9rem; color: var(--fg); padding: 0 .4rem; }
-.homeapps { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.2rem; }
+.homeapps { grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: 1.2rem; }
 .homeapps .happ { min-height: 9.5rem; }
 .homeapps::before { content: "التطبيقات"; font-family: var(--font-display); font-size: 1.9rem; padding: .2rem .4rem 0; }
 .happ { flex-direction: row; gap: 1rem; min-height: 7.6rem; padding: .6rem 1.2rem; border: 0; border-radius: 1.4rem; background: var(--c); background: linear-gradient(135deg, var(--c), color-mix(in srgb, var(--c) 55%, #000)); color: #fff; font-size: 1.9rem; font-weight: 600; justify-content: center; box-shadow: 0 .4rem 1.4rem rgba(0, 0, 0, .35); }
@@ -339,10 +364,31 @@ body.playing .reader { padding-bottom: 16rem; }
 .events .next-name { font-size: 1.5rem; }
 .events .countdown { width: 5.4rem; height: 5.4rem; }
 .events .ring-n b { font-size: 2rem; }
+
+
+.happ i.ico { background: none; width: 4.4rem; height: 4.4rem; border-radius: 1rem; overflow: hidden; box-shadow: 0 .2rem .8rem rgba(0, 0, 0, .4); }
+.happ i.ico img { width: 100%; height: 100%; display: block; object-fit: cover; }
+.happ span.en { font-family: "Inter", "Helvetica Neue", Arial, sans-serif; letter-spacing: .01em; direction: ltr; }
+
+.saver { position: fixed; inset: 0; z-index: 100; background: #02080a; overflow: hidden; }
+.saver[hidden] { display: none; }
+.sv-l { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transition: opacity 2.2s ease; }
+.sv-l.on { opacity: 1; animation: svzoom 40s ease-in-out infinite alternate; }
+@keyframes svzoom { from { transform: scale(1); } to { transform: scale(1.08); } }
+.sv-info { position: absolute; right: 4rem; bottom: 4rem; max-width: 60%; text-align: right; color: #fff; text-shadow: 0 .2rem 1.2rem rgba(0, 0, 0, .8); transition: right 2s ease, bottom 2s ease, left 2s ease, top 2s ease; }
+.saver.nophoto .sv-info { text-shadow: none; }
+.sv-time { font-family: var(--font-display); font-size: 6rem; line-height: 1; }
+.sv-date { font-size: 1.8rem; opacity: .9; margin-top: .4rem; }
+.sv-txt { font-size: 1.7rem; opacity: .8; margin-top: 1rem; line-height: 1.8; }
+.saver.photo .sv-txt { display: none; }
+.amb-photo.rot { width: 100%; background-size: cover; background-position: center; -webkit-mask-image: none; mask-image: none; transition: opacity 2s ease; }
+.ambient.photo.rotbg .amb-photo { opacity: .38; }
 </style>
 </head>
 <body>
 
+
+<div class="saver" id="saver" hidden aria-hidden="true"><div class="sv-l" id="svA"></div><div class="sv-l" id="svB"></div><div class="sv-info" id="svInfo"><div class="sv-time" id="svTime"></div><div class="sv-date" id="svDate"></div><div class="sv-txt" id="svTxt"></div></div></div>
 <div class="ambient" id="ambient" aria-hidden="true"><div class="amb-medal" id="ambMedal"></div><div class="amb-photo" id="ambPhoto"></div></div>
 <div class="adhan-bar" id="adhanBar" hidden role="status" aria-live="assertive"><div class="adhan-txt"><b id="adhanT"></b><span id="adhanS"></span></div><button type="button" class="btn" id="adhanStop">إيقاف</button></div>
 <div class="wx" id="wx" hidden aria-label="حالة الطقس"><span class="wx-ic" id="wxIc"></span><b id="wxT"></b><span id="wxD"></span><i id="wxC"></i></div>
@@ -397,7 +443,7 @@ body.playing .reader { padding-bottom: 16rem; }
     <div class="live-box" id="liveBox"></div>
   </section>
 
-  <section class="view apps" id="v-apps" hidden aria-label="كافة التطبيقات"><div class="view-head"><h2>كافة التطبيقات</h2><button type="button" class="btn" id="appsBack">رجوع للرئيسية</button></div><div class="apps-grid" id="appsGrid"></div></section>
+  <section class="view apps" id="v-apps" hidden aria-label="كافة التطبيقات"><div class="view-head"><h2 id="appsTitle">كافة التطبيقات</h2><button type="button" class="btn" id="appsBack">رجوع للرئيسية</button></div><div class="apps-grid" id="appsGrid"></div></section>
   <section class="view lib" id="v-lib" hidden aria-label="الأدعية والزيارات">
     <div class="view-head">
       <h2>الأدعية والزيارات</h2>
@@ -433,6 +479,7 @@ body.playing .reader { padding-bottom: 16rem; }
       <div class="p-info"><div class="p-title" id="pTitle"></div><div class="p-sub" id="pSub"></div></div>
       <div class="p-ctl">
         <button class="btn" id="pPlay" type="button"></button>
+        <button class="btn ghost" id="pSpeed" type="button" aria-label="سرعة الصوت"></button>
         <button class="btn ghost" id="pRead" type="button">النص</button>
         <button class="btn ghost" id="pStop" type="button">إغلاق</button>
       </div>
@@ -443,7 +490,9 @@ body.playing .reader { padding-bottom: 16rem; }
   </section>
 </div>
 
-<button class="gear" id="gear" type="button" aria-label="تخصيص">⚙</button>
+<button class="gear" id="gear" type="button" aria-label="تخصيص الصفحة" title="تخصيص الصفحة">🎨</button>
+<button class="sysbtn" id="sysBtn" type="button" hidden aria-label="إعدادات التلفاز" title="إعدادات التلفاز">⚙</button>
+<div class="amenu" id="appMenu" hidden role="dialog" aria-modal="true" dir="rtl"><div class="abox"><h3 id="amName"></h3><div class="arow"><button type="button" data-a="prev">→ تقديم</button><button type="button" data-a="next">تأخير ←</button><button type="button" data-a="del">إزالة</button><button type="button" data-a="close">تم</button></div></div></div>
 
 <div class="panel" id="panel" hidden dir="rtl" lang="ar" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
   <div class="sheet">
@@ -492,6 +541,22 @@ body.playing .reader { padding-bottom: 16rem; }
     <div>
       <h3>اختيار الصوت في التشغيل التلقائي</h3>
       <div class="seg" id="rotate"><button type="button" data-r="1">يتبدّل كل يوم</button><button type="button" data-r="0">ثابت على اختيارك</button></div>
+    </div>
+    <div>
+      <h3>شاشة التوقف (لما محد يستعمل التلفزيون)</h3>
+      <div class="seg" id="svOn"><button type="button" data-v="1">تعمل</button><button type="button" data-v="0">متوقفة</button></div>
+      <h3 style="margin-top:1.2rem">تبدأ بعد</h3>
+      <div class="seg" id="svAfter"><button type="button" data-v="120">٢ دقيقة</button><button type="button" data-v="300">٥ دقائق</button><button type="button" data-v="600">١٠ دقائق</button><button type="button" data-v="1800">٣٠ دقيقة</button></div>
+      <h3 style="margin-top:1.2rem">تغيير الصورة كل</h3>
+      <div class="seg" id="svEvery"><button type="button" data-v="30">٣٠ ثانية</button><button type="button" data-v="60">دقيقة</button><button type="button" data-v="300">٥ دقائق</button></div>
+      <div class="seg" style="margin-top:1.2rem"><button type="button" id="svTest">جرّب الآن</button></div>
+      <p class="hint">ضع صور المراقد في المجلد images/shrines بأسماء 1.jpg و2.jpg و3.jpg وهكذا. إذا ما فيه صور تظهر الساعة والذكر بحركة هادئة. أي زر بالريموت يوقفها.</p>
+    </div>
+    <div>
+      <h3>خلفية الصفحة الرئيسية</h3>
+      <div class="seg" id="bgMode"><button type="button" data-v="fixed">الزخرفة (ثابتة)</button><button type="button" data-v="photos">صور المراقد (تتغير)</button></div>
+      <h3 style="margin-top:1.2rem">تغيير الخلفية كل</h3>
+      <div class="seg" id="bgEvery"><button type="button" data-v="30">٣٠ ثانية</button><button type="button" data-v="60">دقيقة</button><button type="button" data-v="300">٥ دقائق</button></div>
     </div>
     <div>
       <h3>الشاشة عند التشغيل</h3>
@@ -601,7 +666,7 @@ body.playing .reader { padding-bottom: 16rem; }
     ["green", "زمردي", "#4fd1a5"], ["blue", "أزرق", "#6ea8ff"], ["maroon", "عنابي", "#e0707f"],
     ["violet", "بنفسجي", "#b69cff"], ["gold", "ذهبي", "#e3b54a"], ["light", "فاتح", "#ffffff"]
   ];
-  var state = { palette: "green", offset: 0, auto: { sabah: true, nudba: true, kumayl: false }, morning: 360, night: 1200, rotate: true, voice: {}, start: "home", liveSound: false, readWith: true, loc: { c: "KW", i: 0 }, pmethod: "jafari", adhan: { on: true, voice: 0, pr: { Fajr: false, Dhuhr: true, Maghrib: true, Isha: true }, pre: 0 }, rfont: 2.6, rspeed: 24 };
+  var state = { palette: "green", offset: 0, auto: { sabah: true, nudba: true, kumayl: false }, morning: 360, night: 1200, rotate: true, voice: {}, start: "home", liveSound: false, readWith: true, loc: { c: "KW", i: 0 }, pmethod: "jafari", adhan: { on: true, voice: 0, pr: { Fajr: false, Dhuhr: true, Maghrib: true, Isha: true }, pre: 0 }, rfont: 2.6, rspeed: 24, homeApps: null, speed: 1, saver: { on: true, after: 300, every: 30 }, bg: { mode: "fixed", every: 60 } };
   try {
     var saved = JSON.parse(localStorage.getItem("tv-hijri") || "{}");
     if (saved.palette) state.palette = saved.palette;
@@ -624,6 +689,17 @@ body.playing .reader { padding-bottom: 16rem; }
     if (typeof saved.liveSound === "boolean") state.liveSound = saved.liveSound;
     if (typeof saved.rfont === "number") state.rfont = saved.rfont;
     if (typeof saved.rspeed === "number") state.rspeed = saved.rspeed;
+    if ([1, 1.5, 2, 3].indexOf(saved.speed) >= 0) state.speed = saved.speed;
+    if (saved.saver) {
+      if (typeof saved.saver.on === "boolean") state.saver.on = saved.saver.on;
+      if ([120, 300, 600, 1800].indexOf(saved.saver.after) >= 0) state.saver.after = saved.saver.after;
+      if ([30, 60, 300].indexOf(saved.saver.every) >= 0) state.saver.every = saved.saver.every;
+    }
+    if (saved.bg) {
+      if (saved.bg.mode === "fixed" || saved.bg.mode === "photos") state.bg.mode = saved.bg.mode;
+      if ([30, 60, 300].indexOf(saved.bg.every) >= 0) state.bg.every = saved.bg.every;
+    }
+    if (Array.isArray(saved.homeApps)) state.homeApps = saved.homeApps.filter(function (a) { return a && typeof a.p === "string" && typeof a.n === "string"; }).slice(0, 5);
   } catch (e) {}
   function save() { try { localStorage.setItem("tv-hijri", JSON.stringify(state)); } catch (e) {} }
 
@@ -784,8 +860,10 @@ body.playing .reader { padding-bottom: 16rem; }
     play: "<svg viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M8 5v14l11-7z\"/></svg>",
     pause: "<svg viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M7 5h4v14H7zM13 5h4v14h-4z\"/></svg>"
   };
+  var VOICE_NAMES = { warith: ["علي فاني"] };
   function slots(id) {
-    return ["الصوت الأول", "الصوت الثاني", "الصوت الثالث"].map(function (n, i) { return { n: n, f: "audio/" + id + "-" + (i + 1) + ".mp3", ok: null }; });
+    var nm = VOICE_NAMES[id] || [];
+    return ["الصوت الأول", "الصوت الثاني", "الصوت الثالث"].map(function (n, i) { return { n: nm[i] || n, f: "audio/" + id + "-" + (i + 1) + ".mp3", ok: null }; });
   }
   var DUAS = {
     sabah: { name: "دعاء الصباح", when: "كل صباح", icon: "sun", voices: slots("sabah") },
@@ -999,8 +1077,8 @@ body.playing .reader { padding-bottom: 16rem; }
       a.src = v.f;
     });
   }
-  function refresh() { renderTiles(); if (view === "lib") renderLib(); }
-  ORDER.forEach(function (k) { probe(k); });
+  function refresh() { renderTiles(); if (view === "lib") renderLib(); if (cur && cur.k && typeof renderPlayer === "function") renderPlayer(); }
+  Object.keys(DUAS).forEach(function (k) { probe(k); });
 
   /* ما يظهر بالرئيسية: ليلة الجمعة كميل أولاً، صباح الجمعة الندبة والفرج، وزيارة وارث ثابتة دائماً */
   function homeList() {
@@ -1079,6 +1157,7 @@ body.playing .reader { padding-bottom: 16rem; }
     }
     $("pPlay").hidden = false; document.querySelector(".p-prog").hidden = false;
     audio.src = DUAS[k].voices[i].f;
+    applySpeed();
     if (state.readWith) loadText(k, function (t) {
       if (t && cur.k === k && $("reader").hidden) { openReader(k); rd.autoOpened = true; }
       syncBtn();
@@ -1089,6 +1168,16 @@ body.playing .reader { padding-bottom: 16rem; }
       if (err && err.name === "NotAllowedError") { setMsg("المتصفح منع التشغيل التلقائي. اضغط تشغيل لبدء الدعاء."); syncPlayBtn(); $("pPlay").focus(); }
     });
   }
+  var SPEEDS = [1, 1.5, 2, 3];
+  function applySpeed() {
+    try { audio.defaultPlaybackRate = state.speed; audio.playbackRate = state.speed; audio.preservesPitch = true; audio.mozPreservesPitch = true; audio.webkitPreservesPitch = true; } catch (e) {}
+    var b = $("pSpeed"); if (b) b.textContent = "السرعة ×" + (state.speed === 1.5 ? "١٫٥" : String(state.speed).replace(/\d/g, function (d) { return "٠١٢٣٤٥٦٧٨٩"[d]; }));
+  }
+  $("pSpeed").addEventListener("click", function () {
+    state.speed = SPEEDS[(SPEEDS.indexOf(state.speed) + 1) % SPEEDS.length]; save(); applySpeed();
+  });
+  audio.addEventListener("loadedmetadata", applySpeed);
+  applySpeed();
   function openDua(k) {
     var i = pickVoice(k);
     if (i < 0) {
@@ -1187,6 +1276,7 @@ body.playing .reader { padding-bottom: 16rem; }
   }
   function showView(v) {
     view = v;
+    document.body.classList.toggle("off-home", v !== "home");
     ["home", "live", "lib", "apps"].forEach(function (n) { $("v-" + n).hidden = n !== v; });
     var ts = $("tabs").children;
     for (var i = 0; i < ts.length; i++) ts[i].setAttribute("aria-pressed", String(ts[i].dataset.v === v));
@@ -1204,7 +1294,10 @@ body.playing .reader { padding-bottom: 16rem; }
   if (HAS_APPS) $("tabApps").hidden = false;
   function escH(t) { return String(t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]; }); }
   var appsDone = false;
-  $("appsBack").addEventListener("click", function () { showView("home"); var g = document.querySelector(".happ"); if (g) g.focus(); });
+  function endPick(focusKey) {
+    pickMode = false; $("appsTitle").textContent = "كافة التطبيقات"; showView("home"); renderHome(focusKey || "edit");
+  }
+  $("appsBack").addEventListener("click", function () { if (pickMode) { endPick("edit"); return; } showView("home"); var g = document.querySelector(".happ"); if (g) g.focus(); });
   document.addEventListener("keydown", function (e) { if (view === "apps" && (e.key === "Escape" || e.key === "Backspace")) { e.preventDefault(); $("appsBack").click(); } });
   function renderApps() {
     if (!HAS_APPS) { $("appsGrid").innerHTML = "<p class=\"note\">قائمة كل التطبيقات تظهر داخل تطبيق معراج تي في (أندرويد). في هذا المتصفح استخدم أزرار الرئيسية.</p>"; return; }
@@ -1212,22 +1305,65 @@ body.playing .reader { padding-bottom: 16rem; }
     var list = [];
     try { list = JSON.parse(window.Android.apps()); } catch (e) { list = []; }
     $("appsGrid").innerHTML = list.map(function (a) {
-      return "<button type=\"button\" class=\"app-btn\" data-p=\"" + escH(a.p) + "\"><img alt=\"\" src=\"data:image/png;base64," + a.i + "\"><span>" + escH(a.l) + "</span></button>";
+      return "<button type=\"button\" class=\"app-btn\" data-p=\"" + escH(a.p) + "\"><img class=\"ic\" alt=\"\" src=\"data:image/png;base64," + a.i + "\"><span>" + escH(a.l) + "</span></button>";
     }).join("") || "<p class=\"note\">ما لقيت تطبيقات.</p>";
     appsDone = true;
   }
   $("appsGrid").addEventListener("click", function (e) {
-    var b = e.target.closest("[data-p]"); if (b && HAS_APPS) window.Android.launch(b.dataset.p);
+    var b = e.target.closest("[data-p]"); if (!b || !HAS_APPS) return;
+    if (pickMode) {
+      var l = myApps().slice();
+      if (homeIdx(b.dataset.p) < 0 && l.length < MAXHOME) { l.push({ p: b.dataset.p, n: (b.querySelector("span") || {}).textContent || b.dataset.p }); state.homeApps = l; save(); }
+      endPick(b.dataset.p); return;
+    }
+    window.Android.launch(b.dataset.p);
   });
 
 
   /* تطبيقات الصفحة الرئيسية: أزرار ثابتة (عدّل القائمة حسب تطبيقاتك) */
   var HOME_APPS = [
-    { n: "يوتيوب", p: "com.google.android.youtube.tv", c: "#e62117", g: "▶" },
-    { n: "نتفلكس", p: "com.netflix.ninja", c: "#b20710", g: "N" },
-    { n: "شاهد", p: "net.mbc.shahidtv", c: "#1f7a5a", g: "ش" },
+    { n: "YouTube", p: "com.google.android.youtube.tv", c: "#e62117", g: "▶" },
+    { n: "Netflix", p: "com.netflix.ninja", c: "#b20710", g: "N" },
+    { n: "Shahid", p: "net.mbc.shahidtv", c: "#1f7a5a", g: "ش" },
+    { n: "Prime Video", p: "com.amazon.amazonvideo.livingroom", c: "#0a3a5c", g: "▷", opt: true },
+    { n: "Disney+", p: "com.disney.disneyplus", c: "#0b1f4d", g: "D+", opt: true },
+    { n: "Spotify", p: "com.spotify.tv.android", c: "#14873f", g: "♫", opt: true },
     { n: "كافة التطبيقات", all: true, c: "#3b4a54", g: "⊞" }
   ];
+  var BANNERS = {};
+  function bannerOf(pkg) {
+    if (!(window.Android && window.Android.banner)) return "";
+    if (!(pkg in BANNERS)) { try { BANNERS[pkg] = window.Android.banner(pkg) || ""; } catch (e) { BANNERS[pkg] = ""; } }
+    return BANNERS[pkg];
+  }
+  var ICONS_C = {};
+  function iconOf(pkg) {
+    if (!(window.Android && window.Android.icon)) return "";
+    if (!(pkg in ICONS_C)) { try { ICONS_C[pkg] = window.Android.icon(pkg) || ""; } catch (e) { ICONS_C[pkg] = ""; } }
+    return ICONS_C[pkg];
+  }
+  var MAXHOME = 5;
+  function isInstalled(pkg) {
+    try { return !!(window.Android && window.Android.installed && window.Android.installed(pkg)); } catch (e) { return false; }
+  }
+  function defaultHome() {
+    return HOME_APPS.filter(function (a) { return !a.all && (!a.opt || isInstalled(a.p)); }).slice(0, MAXHOME).map(function (a) { return { p: a.p, n: a.n }; });
+  }
+  function myApps() { return state.homeApps || defaultHome(); }
+  function appMeta(pkg) {
+    for (var i = 0; i < HOME_APPS.length; i++) if (HOME_APPS[i].p === pkg) return HOME_APPS[i];
+    return null;
+  }
+  /* إعدادات التلفاز (النظام) + زر القائمة بالريموت */
+  (function () {
+    var sb = $("sysBtn");
+    if (window.Android && window.Android.openSettings) { sb.hidden = false; document.body.classList.add("has-sys"); }
+    sb.addEventListener("click", function () { try { window.Android.openSettings(); } catch (e) {} });
+    window.__tvMenu = function () { if (panel.hidden) openPanel(); else closePanel(); };
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "ContextMenu" || e.key === "Menu" || e.keyCode === 82 || e.key === "F1") { e.preventDefault(); window.__tvMenu(); }
+    });
+  })();
   function launchApp(pkg) {
     try {
       if (window.Android && window.Android.launch) { window.Android.launch(pkg); return; }
@@ -1235,13 +1371,63 @@ body.playing .reader { padding-bottom: 16rem; }
     } catch (e) {}
     location.href = "intent://#Intent;package=" + pkg + ";end";
   }
-  $("homeApps").innerHTML = HOME_APPS.map(function (a) {
-    return "<button type=\"button\" class=\"happ\" style=\"--c:" + a.c + "\" " + (a.all ? "data-all=\"1\"" : "data-hp=\"" + escH(a.p) + "\"") + "><i>" + a.g + "</i><span>" + escH(a.n) + "</span></button>";
-  }).join("");
+  var editing = false, pickMode = false, menuPkg = null;
+  var ALL = HOME_APPS[HOME_APPS.length - 1];
+  function renderHome(focusKey) {
+    var host = $("homeApps"), list = myApps().filter(function (a) { return !HAS_APPS || isInstalled(a.p); });
+    var tiles = [];
+    list.forEach(function (a) {
+      var m = appMeta(a.p), key = "data-hp=\"" + escH(a.p) + "\"";
+      var ic = iconOf(a.p), nm = m ? m.n : a.n;
+      var face = ic ? "<i class=\"ico\"><img alt=\"\" src=\"data:image/png;base64," + ic + "\"></i>" : "<i>" + escH(m ? m.g : (a.n || "?").charAt(0)) + "</i>";
+      tiles.push("<button type=\"button\" class=\"happ\" style=\"--c:" + (m ? m.c : "#3b4a54") + "\" " + key + ">" + (editing ? "<u>✎</u>" : "") + face + "<span class=\"en\">" + escH(nm) + "</span></button>");
+    });
+    if (editing && list.length < MAXHOME) tiles.push("<button type=\"button\" class=\"happ add\" data-add=\"1\"><i>+</i><span>إضافة تطبيق</span></button>");
+    tiles.push("<button type=\"button\" class=\"happ\" style=\"--c:" + ALL.c + "\" data-all=\"1\"><i>" + ALL.g + "</i><span>" + ALL.n + "</span></button>");
+    host.style.setProperty("--n", tiles.length);
+    host.classList.toggle("editing", editing);
+    host.innerHTML = tiles.join("") + "<button type=\"button\" class=\"hedit\" id=\"editApps\" aria-label=\"" + (editing ? "تم" : "تعديل التطبيقات") + "\">" + (editing ? "✓" : "✎") + "</button>";
+    var f = null;
+    if (focusKey === "edit") f = $("editApps");
+    else if (focusKey) f = host.querySelector("[data-hp=\"" + focusKey + "\"]");
+    if (f) f.focus();
+  }
+  renderHome();
   $("homeApps").addEventListener("click", function (e) {
+    if (e.target.closest("#editApps")) { editing = !editing; renderHome("edit"); return; }
     var b = e.target.closest(".happ"); if (!b) return;
-    if (b.dataset.all) { showView("apps"); var f = document.querySelector("#appsGrid .app-btn, #appsBack"); if (f) f.focus(); }
-    else launchApp(b.dataset.hp);
+    if (b.dataset.all) { showView("apps"); var f = document.querySelector("#appsGrid .app-btn, #appsBack"); if (f) f.focus(); return; }
+    if (b.dataset.add) { pickMode = true; $("appsTitle").textContent = "اختر التطبيق اللي تبي تضيفه"; showView("apps"); var f2 = document.querySelector("#appsGrid .app-btn, #appsBack"); if (f2) f2.focus(); return; }
+    if (editing) { openAppMenu(b.dataset.hp); return; }
+    launchApp(b.dataset.hp);
+  });
+
+  /* قائمة تحريك التطبيق */
+  function homeIdx(pkg) { var l = myApps(); for (var i = 0; i < l.length; i++) if (l[i].p === pkg) return i; return -1; }
+  function openAppMenu(pkg) {
+    menuPkg = pkg;
+    var l = myApps(), i = homeIdx(pkg);
+    $("amName").textContent = l[i] ? l[i].n : "";
+    $("appMenu").hidden = false;
+    syncAppMenu();
+    var f = $("appMenu").querySelector("button:not([disabled])"); if (f) f.focus();
+  }
+  function syncAppMenu() {
+    var i = homeIdx(menuPkg), n = myApps().length;
+    $("appMenu").querySelector("[data-a=prev]").disabled = i <= 0;
+    $("appMenu").querySelector("[data-a=next]").disabled = i < 0 || i >= n - 1;
+  }
+  function closeAppMenu() { $("appMenu").hidden = true; var k = menuPkg; menuPkg = null; renderHome(k); }
+  $("appMenu").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b || b.disabled) return;
+    var a = b.dataset.a, l = myApps().slice(), i = homeIdx(menuPkg), t;
+    if (a === "close") { closeAppMenu(); return; }
+    if (a === "del") { l.splice(i, 1); state.homeApps = l; save(); $("appMenu").hidden = true; menuPkg = null; renderHome("edit"); return; }
+    t = a === "prev" ? i - 1 : i + 1;
+    if (i < 0 || t < 0 || t >= l.length) return;
+    var x = l[i]; l[i] = l[t]; l[t] = x; state.homeApps = l; save();
+    renderHome(); syncAppMenu();
+    if (b.disabled) { var f = $("appMenu").querySelector("[data-a=close]"); f.focus(); }
   });
 
   function renderLib() {
@@ -1399,6 +1585,7 @@ body.playing .reader { padding-bottom: 16rem; }
   (function () {
     var SEL = "button:not([disabled]), a[href], [tabindex=\"0\"]:not(#rBody)";
     function scope() {
+      if (!$("appMenu").hidden) return $("appMenu");
       if (!panel.hidden) return panel;
       if (!$("reader").hidden) return document;
       if ($("pIcon").classList.contains("full")) return $("pIcon");
@@ -1453,8 +1640,12 @@ body.playing .reader { padding-bottom: 16rem; }
 
   /* زر الرجوع في الريموت: يغلق أعلى شيء مفتوح. يرجع true إذا أغلق شيئاً */
   window.__tvBack = function () {
+    if (saverOn) { stopSaver(); return true; }
+    if (!$("appMenu").hidden) { closeAppMenu(); return true; }
     if (!panel.hidden) { closePanel(); return true; }
     if (!$("reader").hidden) { closeReader(); return true; }
+    if (pickMode) { endPick("edit"); return true; }
+    if (editing) { editing = false; renderHome("edit"); return true; }
     if (cur.k || !$("player").hidden) { closePlayer(); var t = $("pinZ"); if (t) t.focus(); return true; }
     if (view !== "home") { showView("home"); var g = document.querySelector(".happ"); if (g) g.focus(); return true; }
     return false;
@@ -1773,6 +1964,114 @@ body.playing .reader { padding-bottom: 16rem; }
       $("ambient").classList.add("photo");
     });
   })();
+
+  /* صور المراقد + شاشة التوقف + خلفية متغيرة */
+  var SHRINES = [], shrinesReady = false, shrinesCbs = [];
+  function loadShrines(cb) {
+    if (shrinesReady) { cb(SHRINES); return; }
+    shrinesCbs.push(cb);
+    if (shrinesCbs.length > 1) return;
+    (function probe(i) {
+      var im = new Image();
+      im.onload = function () { SHRINES.push("images/shrines/" + i + ".jpg"); if (i < 60) probe(i + 1); else done(); };
+      im.onerror = done;
+      im.src = "images/shrines/" + i + ".jpg";
+    })(1);
+    function done() { shrinesReady = true; shrinesCbs.splice(0).forEach(function (f) { f(SHRINES); }); }
+  }
+  function markSeg(id, val) {
+    var c = $(id).children;
+    for (var i = 0; i < c.length; i++) c[i].setAttribute("aria-pressed", String(c[i].dataset.v === String(val)));
+  }
+  var saverOn = false, lastAct = Date.now(), svTimer = null, svIdx = 0, svFlip = false, svPos = 0;
+  function svShow(i) {
+    var a = $("svA"), b = $("svB"), nxt = svFlip ? a : b, old = svFlip ? b : a;
+    nxt.style.backgroundImage = "url(" + SHRINES[i % SHRINES.length] + ")";
+    nxt.classList.add("on"); old.classList.remove("on"); svFlip = !svFlip;
+  }
+  var SV_POS = [{ right: "4rem", bottom: "4rem", left: "auto", top: "auto" }, { left: "4rem", bottom: "4rem", right: "auto", top: "auto" }, { left: "4rem", top: "4rem", right: "auto", bottom: "auto" }, { right: "4rem", top: "4rem", left: "auto", bottom: "auto" }];
+  function svTick() {
+    $("svTime").textContent = $("time").textContent + " " + ($("period").textContent || "");
+    $("svDate").textContent = ($("greg").textContent || "");
+    $("svTxt").textContent = ($("dText").textContent || "");
+    var p = SV_POS[svPos++ % SV_POS.length], st = $("svInfo").style;
+    st.right = p.right; st.left = p.left; st.top = p.top; st.bottom = p.bottom;
+    if (SHRINES.length) { svIdx += 1; svShow(svIdx); }
+  }
+  function startSaver() {
+    if (saverOn) return;
+    loadShrines(function () {
+      saverOn = true;
+      var sv = $("saver");
+      sv.hidden = false;
+      sv.classList.toggle("photo", SHRINES.length > 0);
+      sv.classList.toggle("nophoto", SHRINES.length === 0);
+      svIdx = Math.floor(Math.random() * Math.max(1, SHRINES.length));
+      svPos = 0;
+      $("svTime").textContent = $("time").textContent + " " + ($("period").textContent || "");
+      $("svDate").textContent = $("greg").textContent || "";
+      $("svTxt").textContent = $("dText").textContent || "";
+      if (SHRINES.length) svShow(svIdx);
+      svTimer = setInterval(svTick, state.saver.every * 1000);
+    });
+  }
+  function stopSaver() {
+    if (!saverOn) return;
+    saverOn = false; clearInterval(svTimer); svTimer = null;
+    $("saver").hidden = true; $("svA").classList.remove("on"); $("svB").classList.remove("on");
+    lastAct = Date.now();
+  }
+  ["keydown", "mousemove", "mousedown", "touchstart", "wheel"].forEach(function (ev) {
+    document.addEventListener(ev, function (e) {
+      if (saverOn) { if (ev === "keydown" || ev === "mousedown" || ev === "touchstart") { e.preventDefault(); e.stopPropagation(); } stopSaver(); return; }
+      lastAct = Date.now();
+    }, true);
+  });
+  function audioBusy() {
+    return (!audio.paused && !audio.ended) || (!adhanAudio.paused && !adhanAudio.ended);
+  }
+  setInterval(function () {
+    if (saverOn || !state.saver.on) return;
+    if (Date.now() - lastAct < state.saver.after * 1000) return;
+    if (!$("player").hidden || !$("reader").hidden || !panel.hidden || !$("appMenu").hidden || audioBusy()) return;
+    startSaver();
+  }, 5000);
+  window.__tvSaverNow = startSaver;
+
+  /* خلفية الرئيسية المتغيرة */
+  var bgTimer = null, bgI = 0;
+  function applyBg() {
+    clearInterval(bgTimer); bgTimer = null;
+    var amb = $("ambient"), ph = $("ambPhoto");
+    if (state.bg.mode !== "photos") {
+      ph.classList.remove("rot"); amb.classList.remove("rotbg");
+      photoProbe("bg", function (ok) {
+        if (ok) { ph.style.backgroundImage = "url(images/bg.jpg)"; amb.classList.add("photo"); } else amb.classList.remove("photo");
+      });
+      return;
+    }
+    loadShrines(function (list) {
+      if (!list.length) return;
+      ph.classList.add("rot"); amb.classList.add("photo", "rotbg");
+      function step() { ph.style.backgroundImage = "url(" + list[bgI++ % list.length] + ")"; }
+      bgI = Math.floor(Math.random() * list.length); step();
+      bgTimer = setInterval(step, state.bg.every * 1000);
+    });
+  }
+  function buildSaverSettings() {
+    function bind(id, fn) { $(id).addEventListener("click", function (e) { var b = e.target.closest("button"); if (!b) return; fn(b.dataset.v); save(); syncSaverSettings(); }); }
+    bind("svOn", function (v) { state.saver.on = v === "1"; });
+    bind("svAfter", function (v) { state.saver.after = +v; });
+    bind("svEvery", function (v) { state.saver.every = +v; });
+    bind("bgMode", function (v) { state.bg.mode = v; applyBg(); });
+    bind("bgEvery", function (v) { state.bg.every = +v; applyBg(); });
+    $("svTest").addEventListener("click", function () { panel.hidden = true; setTimeout(startSaver, 200); });
+  }
+  function syncSaverSettings() {
+    markSeg("svOn", state.saver.on ? "1" : "0"); markSeg("svAfter", state.saver.after); markSeg("svEvery", state.saver.every);
+    markSeg("bgMode", state.bg.mode); markSeg("bgEvery", state.bg.every);
+  }
+  buildSaverSettings(); syncSaverSettings(); if (state.bg.mode === "photos") applyBg();
   buildPanel();
   buildLocSettings(); syncLocSettings(); reloadLoc();
   buildAdhanSettings(); syncAdhanSettings();

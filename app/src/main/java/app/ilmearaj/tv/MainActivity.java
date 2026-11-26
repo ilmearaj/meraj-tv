@@ -42,7 +42,7 @@ public class MainActivity extends Activity {
 
     /** النسخة الداخلية (تشتغل بدون نت). */
     private static final String START_URL = "https://appassets.androidplatform.net/assets/index.html";
-    /** الصفحة على Netlify: أي تعديل تنشره يوصل التلفزيون بدون بناء جديد. */
+    /** غير مستخدمة: الصفحة مدمجة داخل التطبيق. */
     private static final String REMOTE_URL = "https://classy-dasik-338077.netlify.app/";
     private boolean fellBack = false;
 
@@ -107,7 +107,7 @@ public class MainActivity extends Activity {
         web.requestFocus();
 
         if (savedInstanceState == null) {
-            web.loadUrl(REMOTE_URL);
+            web.loadUrl(START_URL);
         } else {
             web.restoreState(savedInstanceState);
         }
