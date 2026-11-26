@@ -383,6 +383,50 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
 .saver.photo .sv-txt { display: none; }
 .amb-photo.rot { width: 100%; background-size: cover; background-position: center; -webkit-mask-image: none; mask-image: none; transition: opacity 2s ease; }
 .ambient.photo.rotbg .amb-photo { opacity: .38; }
+
+/* ===== مناسبات + أحاديث + قارئ ===== */
+.dhikr-note { display: block !important; font-size: 1.15rem; color: var(--accent2); }
+.dhikr-text { -webkit-line-clamp: 3 !important; }
+.occ-in { display: none; flex-direction: column; align-items: center; gap: .2rem; text-align: center; padding: 0; }
+.occ-in b { font-family: var(--font-display); font-size: 2.2rem; line-height: 1.3; color: var(--fg); }
+.occ-in span { font-size: 1.25rem; color: var(--accent2); }
+#dhikr.occ-on .dhikr-top, #dhikr.occ-on .dhikr-text, #dhikr.occ-on .bar, #dhikr.occ-on .orn { display: none !important; }
+#dhikr.occ-on .occ-in { display: flex; }
+:root[data-occ="m"], :root[data-occ="m"][data-palette] { --bg:#000; --bg2:#0b0b0d; --glow1:rgba(255,255,255,.05); --glow2:rgba(255,255,255,.04); --accent:#d9d9d9; --accent2:#c9ae6a; --accent-soft:rgba(255,255,255,.10); --accent-ink:#000; --muted:#9b9b9b; }
+:root[data-occ="b"], :root[data-occ="e"] { --accent2:#ffd978; }
+:root[data-occ="m"] #dhikr.occ-on { border-color: rgba(255,255,255,.28); background: rgba(255,255,255,.04); }
+:root[data-occ="b"] #dhikr.occ-on, :root[data-occ="e"] #dhikr.occ-on { border-color: #ffd978; background: rgba(255,217,120,.08); }
+.sv-occ { display: block; font-family: var(--font-display); font-size: 2.2rem; color: #fff; margin-top: .6rem; }
+.rc { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .35rem 0; border-bottom: 1px solid var(--line); }
+.rc > span { font-size: 1.1rem; min-width: 11rem; }
+.rc .seg { flex: 1; }
+.rc .seg button[disabled] { opacity: .38; }
+.hint { color: var(--muted); font-size: .95rem; margin: .3rem 0 0; }
+.happ.libt { --c: #8a6a1f; }
+.happ.libt i { font-size: 2.2rem; }
+.events { grid-template-columns: minmax(0, 1fr) minmax(0, .8fr) minmax(0, .9fr) minmax(0, 1.25fr) !important; }
+.events::before { grid-column: 1 / 4 !important; grid-row: 1; }
+.events .pin, .events .picks, .events .next { grid-row: 2; }
+.events .prayers { display: grid !important; grid-column: 4 !important; grid-row: 1 / span 2; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; grid-template-rows: auto 1fr 1fr; gap: .5rem; align-content: stretch; }
+.events .prayers .pr-h { grid-column: 1 / -1 !important; grid-row: auto; flex: none; padding-bottom: .1rem; }
+.events .prayers .pr-msg { grid-column: 1 / -1; }
+.events .pr { flex: none; }
+.events .pr b { font-size: 1.3rem !important; white-space: nowrap; }
+.events .pr span { font-size: .95rem; }
+.events .pr { padding: .6rem .15rem !important; }
+.events .pin b { font-size: 1.5rem !important; }
+.events .next-name { font-size: 1.25rem !important; }
+.events .next-date { font-size: .95rem; }
+.events .pin { grid-column: 1; }
+.events .picks { grid-column: 2; display: grid; grid-auto-rows: 1fr; gap: .6rem; min-height: 9.2rem; min-width: 0; }
+.events .next { grid-column: 3; }
+.events .prayers { grid-column: 4 !important; }
+.events .picks .tile { min-height: 0; padding: .5rem .9rem; border-radius: 1.2rem; }
+.events .picks .tile b { font-size: 1.35rem; }
+.events .picks .tile > span:not(.ic) { font-size: .95rem; }
+.events .picks .tile .ic { width: 1.7rem; height: 1.7rem; }
+.events .picks .tile .badge { font-size: .8rem; padding: .05rem .5rem; }
+.happ span:not(.en) { font-size: 1.5rem; white-space: normal; text-align: center; line-height: 1.2; }
 </style>
 </head>
 <body>
@@ -413,11 +457,13 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     <div class="dhikr-top"><span class="chip" id="dTag"></span><span class="dhikr-note" id="dNote"></span></div>
     <div class="orn" aria-hidden="true"><i></i></div>
     <p class="dhikr-text" id="dText"></p>
+    <div class="occ-in" id="occIn"><b id="occT"></b><span id="occS"></span></div>
     <div class="bar"><i id="dBar"></i></div>
   </section>
 
   <section class="events" aria-label="المناسبات القادمة">
     <button class="tile pin" id="pinZ" type="button" data-k="warith"></button>
+    <div class="picks" id="picks" aria-label="أدعية اليوم"></div>
     <div class="next" id="next">
       <div>
         <div class="label-row"><span class="dot" id="nextDot"></span><div class="label" id="nextLabel">المناسبة القادمة</div></div>
@@ -500,6 +546,14 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     <div>
       <h3>اللون</h3>
       <div class="swatches" id="swatches"></div>
+    </div>
+    <div>
+      <h3>ضبط المواقيت (بالدقائق، لتطابق مرجعك)</h3>
+      <div id="tune"></div>
+      <h3 style="margin-top:1rem">القارئ لكل دعاء</h3>
+      <div id="reciters"></div>
+      <h3 style="margin-top:1rem">معاينة المناسبة (للتجربة فقط)</h3>
+      <div class="seg" id="occPrev"><button type="button" data-o="">بدون</button><button type="button" data-o="m">ليلة شهادة</button><button type="button" data-o="b">مولد</button><button type="button" data-o="e">عيد</button></div>
     </div>
     <div>
       <h3>الموقع (الطقس ومواقيت الصلاة)</h3>
@@ -650,6 +704,15 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     { t: "اللهُ أَكْبَرُ (٣٤)، الْحَمْدُ لِلَّهِ (٣٣)، سُبْحَانَ اللهِ (٣٣)", n: "تسبيح السيدة الزهراء (ع) بعد كل صلاة", tag: "تعقيب" },
     { t: "اللَّهُمَّ كُنْ لِوَلِيِّكَ الْحُجَّةِ بْنِ الْحَسَنِ صَلَوَاتُكَ عَلَيْهِ وَعَلَى آبَائِهِ فِي هَذِهِ السَّاعَةِ وَفِي كُلِّ سَاعَةٍ وَلِيّاً وَحَافِظاً وَقَائِداً وَنَاصِراً وَدَلِيلاً وَعَيْناً حَتَّى تُسْكِنَهُ أَرْضَكَ طَوْعاً وَتُمَتِّعَهُ فِيهَا طَوِيلاً", n: "دعاء الفرج", tag: "دعاء" }
   ];
+  var RIWAYAT = [
+    { t: "حُسَيْنٌ مِنِّي وَأَنَا مِنْ حُسَيْنٍ، أَحَبَّ اللهُ مَنْ أَحَبَّ حُسَيْناً", n: "عن النبي محمد (ص)", s: "سنن الترمذي، سنن ابن ماجه، كامل الزيارات" },
+    { t: "إِنِّي تَارِكٌ فِيكُمُ الثَّقَلَيْنِ: كِتَابَ اللهِ وَعِتْرَتِي أَهْلَ بَيْتِي، مَا إِنْ تَمَسَّكْتُمْ بِهِمَا لَنْ تَضِلُّوا بَعْدِي", n: "عن النبي محمد (ص)، حديث الثقلين", s: "رواه الفريقان: صحيح مسلم، سنن الترمذي، الكافي" },
+    { t: "إِنَّمَا بُعِثْتُ لِأُتَمِّمَ مَكَارِمَ الْأَخْلَاقِ", n: "عن النبي محمد (ص)", s: "مكارم الأخلاق للطبرسي" },
+    { t: "قِيمَةُ كُلِّ امْرِئٍ مَا يُحْسِنُهُ", n: "عن الإمام علي (ع)", s: "نهج البلاغة، الحكمة ٨١" },
+    { t: "النَّاسُ صِنْفَانِ: إِمَّا أَخٌ لَكَ فِي الدِّينِ، وَإِمَّا نَظِيرٌ لَكَ فِي الْخَلْقِ", n: "عن الإمام علي (ع) في عهده لمالك الأشتر", s: "نهج البلاغة، الكتاب ٥٣" },
+    { t: "كُونُوا دُعَاةً لِلنَّاسِ بِغَيْرِ أَلْسِنَتِكُمْ", n: "عن الإمام الصادق (ع)", s: "الكافي، باب الورع" },
+    { t: "إِنِّي لَمْ أَخْرُجْ أَشِراً وَلَا بَطِراً وَلَا مُفْسِداً وَلَا ظَالِماً، وَإِنَّمَا خَرَجْتُ لِطَلَبِ الْإِصْلَاحِ فِي أُمَّةِ جَدِّي", n: "عن الإمام الحسين (ع)", s: "بحار الأنوار، ج٤٤" }
+  ];
   var MORNING = [
     { t: "بِسْمِ اللهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ", n: "ثلاث مرات في الصباح" },
     { t: "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَ هَذَا الْيَوْمِ وَفَتْحَهُ وَنَصْرَهُ وَنُورَهُ وَبَرَكَتَهُ وَهُدَاهُ" },
@@ -666,10 +729,11 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     ["green", "زمردي", "#4fd1a5"], ["blue", "أزرق", "#6ea8ff"], ["maroon", "عنابي", "#e0707f"],
     ["violet", "بنفسجي", "#b69cff"], ["gold", "ذهبي", "#e3b54a"], ["light", "فاتح", "#ffffff"]
   ];
-  var state = { palette: "green", offset: 0, auto: { sabah: true, nudba: true, kumayl: false }, morning: 360, night: 1200, rotate: true, voice: {}, start: "home", liveSound: false, readWith: true, loc: { c: "KW", i: 0 }, pmethod: "jafari", adhan: { on: true, voice: 0, pr: { Fajr: false, Dhuhr: true, Maghrib: true, Isha: true }, pre: 0 }, rfont: 2.6, rspeed: 24, homeApps: null, speed: 1, saver: { on: true, after: 300, every: 30 }, bg: { mode: "fixed", every: 60 } };
+  var state = { ptune: { Fajr: 0, Sunrise: 0, Dhuhr: 0, Maghrib: 0, Isha: 0, Midnight: 0 }, palette: "green", offset: 0, auto: { sabah: true, nudba: true, kumayl: false }, morning: 360, night: 1200, rotate: true, voice: {}, start: "home", liveSound: false, readWith: true, loc: { c: "KW", i: 0 }, pmethod: "jafari", adhan: { on: true, voice: 0, pr: { Fajr: false, Dhuhr: true, Maghrib: true, Isha: true }, pre: 0 }, rfont: 2.6, rspeed: 24, homeApps: null, speed: 1, saver: { on: true, after: 300, every: 30 }, bg: { mode: "fixed", every: 60 } };
   try {
     var saved = JSON.parse(localStorage.getItem("tv-hijri") || "{}");
     if (saved.palette) state.palette = saved.palette;
+    if (saved.ptune) for (var tk in state.ptune) if (typeof saved.ptune[tk] === "number" && Math.abs(saved.ptune[tk]) <= 30) state.ptune[tk] = Math.round(saved.ptune[tk]);
     if (typeof saved.offset === "number") state.offset = saved.offset;
     if (saved.auto) for (var ak in state.auto) if (typeof saved.auto[ak] === "boolean") state.auto[ak] = saved.auto[ak];
     if (typeof saved.morning === "number") state.morning = saved.morning;
@@ -772,6 +836,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
       html += "<li><i class=\"dot " + (KC[u.kind] || "o") + "\"></i><span class=\"when\">" + ar(u.d) + " " + HM[u.m - 1] + "</span><span class=\"what\">" + u.name + "</span><span class=\"kind\">" + daysText(u.j - eff) + "</span></li>";
     }
     $("list").innerHTML = html;
+    applyOcc();
     renderTiles();
   }
 
@@ -794,6 +859,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     var i;
     for (i = 0; i < set.length; i++) items.push({ t: set[i].t, n: set[i].n, tag: tag });
     for (i = 0; i < GENERAL.length; i++) items.push({ t: GENERAL[i].t, n: GENERAL[i].n, tag: GENERAL[i].tag || tag });
+    for (i = 0; i < RIWAYAT.length; i++) items.push({ t: RIWAYAT[i].t, n: RIWAYAT[i].n, s: RIWAYAT[i].s, tag: "حديث شريف" });
     if (dow === 5) items.push({ t: "دعاء الندبة", n: "يُستحب قراءته صباح يوم الجمعة", tag: "يوم الجمعة" });
     if (dow === 4 && hr >= 17) items.push({ t: "دعاء كميل", n: "يُستحب قراءته ليلة الجمعة", tag: "ليلة الجمعة" });
     return items;
@@ -803,7 +869,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     var box = $("dhikr");
     var apply = function () {
       $("dTag").textContent = it.tag;
-      $("dNote").textContent = it.n || "";
+      $("dNote").textContent = [it.n, it.s ? "المصدر: " + it.s : ""].filter(Boolean).join(" · ");
       var t = $("dText");
       t.textContent = it.t;
       t.classList.toggle("long", it.t.length > 110);
@@ -816,7 +882,36 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     if (first) apply();
     else { box.classList.add("swap"); setTimeout(apply, 450); }
   }
-  function nextDhikr() { di += 1; showDhikr(false); }
+  function nextDhikr() { if (occasion()) return; di += 1; showDhikr(false); }
+  /* المناسبات: ثيمة سوداء للمصاب وتهنئة للمولد والعيد، من مغرب الليلة السابقة حتى مغرب يوم المناسبة */
+  var OCC_PREV = null;
+  function occasion() {
+    if (OCC_PREV) return OCC_PREV;
+    var n = new Date(), mins = n.getHours() * 60 + n.getMinutes();
+    var rj = effectiveJdn() + (mins >= maghribMin() ? 1 : 0), h = jdnToH(rj);
+    for (var i = 0; i < EV.length; i++) {
+      var e = EV[i];
+      if (e[0] !== h.m || Math.min(e[1], monthLen(h.y, h.m)) !== h.d) continue;
+      var nm = e[2], k = e[3];
+      if (k === "شهادة" || k === "وفاة" || /ضربة/.test(nm)) {
+        var ph = (nm.match(/(استشهاد|وفاة|ضربة)[^،]*/) || [nm])[0];
+        return { t: "m", real: true, name: nm, a: "عظّم الله أجورنا وأجوركم", b: "في ذكرى " + ph };
+      }
+      if (k === "مولد") return { t: "b", real: true, name: nm, a: "متباركين " + nm.replace(/^مولد/, "بمولد"), b: "جعله الله عليكم يُمناً وبركة" };
+      if (k === "عيد") return { t: "e", real: true, name: nm, a: "عيدكم مبارك", b: nm };
+    }
+    return null;
+  }
+  function applyOcc() {
+    var o = occasion(), root = document.documentElement, box = $("dhikr");
+    if (!o) { root.removeAttribute("data-occ"); box.classList.remove("occ-on"); return; }
+    root.setAttribute("data-occ", o.t);
+    box.classList.add("occ-on");
+    $("occT").textContent = o.a; $("occS").textContent = o.b;
+  }
+  function svText() { var o = occasion(); return o ? o.a + " · " + o.b : ($("dText").textContent || ""); }
+  setInterval(applyOcc, 60000);
+
 
   /* لوحة التخصيص */
   var panel = $("panel");
@@ -843,7 +938,45 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     var bs = $("offsets").children;
     for (var i = 0; i < bs.length; i++) bs[i].setAttribute("aria-pressed", String(parseInt(bs[i].dataset.o, 10) === state.offset));
   }
-  function openPanel() { panel.hidden = false; markOffsets(); applyPalette(); var f = panel.querySelector(".sw"); if (f) f.focus(); }
+
+  function buildReciters() {
+    var box = $("reciters"), h = "";
+    ["sabah", "nudba", "kumayl", "kisa", "faraj", "warith", "ashura", "arbaeen", "iftitah", "abuhamza"].forEach(function (k) {
+      var d = DUAS[k]; if (!d) return;
+      var cur = pickVoice(k);
+      h += "<div class=\"rc\"><span>" + d.name + "</span><div class=\"seg\" data-k=\"" + k + "\">" + (d.voices.some(function (v) { return v.ok !== false; }) ? d.voices.map(function (v, i) {
+        return v.ok === false ? "" : "<button type=\"button\" data-i=\"" + i + "\" aria-pressed=\"" + (cur === i) + "\">" + v.n + "</button>";
+      }).join("") : "<span class=\"hint\">لم يُضف صوت بعد</span>") + "</div></div>";
+    });
+    h += "<p class=\"hint\">القارئ المختار يُحفظ لكل دعاء. </p>";
+    box.innerHTML = h;
+  }
+  $("reciters").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b || b.disabled) return;
+    var k = b.parentNode.dataset.k; state.voice[k] = parseInt(b.dataset.i, 10); state.rotate = false; save(); buildReciters(); refresh();
+  });
+  $("occPrev").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    var t = b.dataset.o;
+    OCC_PREV = !t ? null : t === "m" ? { t: "m", name: "", a: "عظّم الله أجورنا وأجوركم", b: "في ذكرى استشهاد الإمام الرضا (ع)" } : t === "b" ? { t: "b", name: "", a: "متباركين بمولد الإمام علي (ع)", b: "جعله الله عليكم يُمناً وبركة" } : { t: "e", name: "", a: "عيدكم مبارك", b: "عيد الفطر المبارك" };
+    applyOcc();
+  });
+  window.__occPreview = function (t) { var b = $("occPrev").querySelector("[data-o=\"" + (t || "") + "\"]"); if (b) b.click(); };
+  function buildTune() {
+    var h = "";
+    PRS.forEach(function (p) {
+      var v = state.ptune[p[0]] || 0;
+      h += "<div class=\"rc\"><span>" + p[1] + "</span><div class=\"seg tn\" data-k=\"" + p[0] + "\"><button type=\"button\" data-d=\"-1\">−</button><button type=\"button\" disabled style=\"opacity:1\">" + (v > 0 ? "+" : v < 0 ? "−" : "") + ar(Math.abs(v)) + "</button><button type=\"button\" data-d=\"1\">+</button></div></div>";
+    });
+    $("tune").innerHTML = h;
+  }
+  $("tune").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b || b.disabled || !b.dataset.d) return;
+    var k = b.parentNode.dataset.k, v = (state.ptune[k] || 0) + parseInt(b.dataset.d, 10);
+    state.ptune[k] = Math.max(-30, Math.min(30, v)); save(); retune(); buildTune();
+    var nb = $("tune").querySelector("[data-k=\"" + k + "\"] [data-d=\"" + b.dataset.d + "\"]"); if (nb) nb.focus();
+  });
+  function openPanel() { buildTune(); buildReciters(); panel.hidden = false; markOffsets(); applyPalette(); var f = panel.querySelector(".sw"); if (f) f.focus(); }
   function closePanel() { panel.hidden = true; $("gear").focus(); }
   $("gear").addEventListener("click", openPanel);
   $("close").addEventListener("click", closePanel);
@@ -860,7 +993,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     play: "<svg viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M8 5v14l11-7z\"/></svg>",
     pause: "<svg viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M7 5h4v14H7zM13 5h4v14h-4z\"/></svg>"
   };
-  var VOICE_NAMES = { warith: ["علي فاني"] };
+  var VOICE_NAMES = { warith: ["علي فاني"], kumayl: ["الشيخ حسين الأكرف", "علي بوحمد", "محسن فرهمند وعلي فاني"], nudba: ["السيد مهدي الجزائري", "مرتضى قريش", "علي حمادي"], kisa: ["مرتضى قريش", "علي فاني"] };
   function slots(id) {
     var nm = VOICE_NAMES[id] || [];
     return ["الصوت الأول", "الصوت الثاني", "الصوت الثالث"].map(function (n, i) { return { n: nm[i] || n, f: "audio/" + id + "-" + (i + 1) + ".mp3", ok: null }; });
@@ -885,9 +1018,16 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
   add("yasin", "زيارة آل ياسين", "زيارات", "dome");
   add("jamia", "الزيارة الجامعة الكبيرة", "زيارات", "dome");
   add("aminullah", "زيارة أمين الله", "زيارات", "dome");
+  add("kisa", "حديث الكساء", "أدعية", "book");
+  add("iftitah", "دعاء الافتتاح", "أدعية رمضان", "moon");
+  add("abuhamza", "دعاء أبي حمزة الثمالي", "أدعية رمضان", "sun");
+  add("jawshan", "دعاء الجوشن الكبير", "أدعية رمضان", "book");
+  add("ramadan", "دعاء اليوم من رمضان", "أدعية رمضان", "book");
+  add("arafa", "دعاء عرفة", "أدعية", "sun");
+  add("ghadir", "زيارة أمير المؤمنين (ع) يوم الغدير", "زيارات", "dome");
   /* صوت من يوتيوب (يظهر أول خيار). اللي بعده ملفات audio لو أضفتها */
   DUAS.kumayl.voices.unshift({ n: "يوتيوب", yt: "Vq_IhRfQYwQ", ok: true });
-  var GROUPS = ["أدعية", "زيارات"];
+  var GROUPS = ["أدعية", "أدعية رمضان", "زيارات"];
   var VIDEOS = [{ name: "مرئيات العتبة الحسينية", sub: "القناة الرسمية على يوتيوب", list: "UUG62vI9vb-neEb2t5XWT_Gg" }];
   var audio = new Audio();
   audio.preload = "auto";
@@ -1045,6 +1185,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
         circ(160, 96, 36, "rgba(255,255,255,.14)"), circ(160, 96, 36, "none", " stroke=\"#fff\" stroke-opacity=\".7\" stroke-width=\"2\""), "<path d=\"M150 78l30 18-30 18z\" fill=\"#fff\"/>"].join("");
     }
   };
+  SCENES.iftitah = SCENES.kumayl; SCENES.abuhamza = SCENES.sabah; SCENES.jawshan = SCENES.tawassul; SCENES.ramadan = SCENES.kumayl; SCENES.arafa = SCENES.ahd; SCENES.kisa = SCENES.tawassul; SCENES.ghadir = SCENES.ahd;
   function art(k) {
     var fn = SCENES[k] || SCENES.video, p = "a" + (++_aid) + "-";
     return "<div class=\"art\" data-id=\"" + k + "\"><svg viewBox=\"0 0 320 200\" preserveAspectRatio=\"xMidYMid slice\" aria-hidden=\"true\">" + fn(p) + "</svg></div>";
@@ -1081,14 +1222,33 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
   Object.keys(DUAS).forEach(function (k) { probe(k); });
 
   /* ما يظهر بالرئيسية: ليلة الجمعة كميل أولاً، صباح الجمعة الندبة والفرج، وزيارة وارث ثابتة دائماً */
+  function maghribMin() { return (typeof PR !== "undefined" && PR && PR.t && typeof PR.t.Maghrib === "number") ? PR.t.Maghrib : 1080; }
   function homeList() {
     var n = new Date(), mins = n.getHours() * 60 + n.getMinutes(), wd = n.getDay();
-    var kumaylWin = (wd === 4 && mins >= state.night - 180) || (wd === 5 && mins < 240);
-    var friMorning = wd === 5 && mins >= 240 && mins < 13 * 60;
-    var lead = kumaylWin ? ["kumayl"] : friMorning ? ["nudba", "faraj"] : ["sabah"];
+    var eve = mins >= maghribMin(), night = eve || mins < 270;
+    var rj = effectiveJdn() + (mins >= maghribMin() ? 1 : 0), h = jdnToH(rj);
+    var wdr = (wd + (mins >= maghribMin() ? 1 : 0)) % 7;
+    var lead = [], why = {};
+    function L(k, w) { if (lead.indexOf(k) < 0) { lead.push(k); why[k] = w; } }
+    var oc = occasion();
+    if (night && wdr === 5) L("kumayl", "ليلة الجمعة");
+    if (h.m === 9) {
+      if (night) { L("iftitah", "ليلة " + ar(h.d) + " من رمضان"); if (h.d === 19 || h.d === 21 || h.d === 23) L("jawshan", "ليلة من ليالي القدر"); }
+      else { L("ramadan", "يوم " + ar(h.d) + " من رمضان"); }
+      if (night && mins < 270) L("abuhamza", "قبل الفجر في رمضان");
+    }
+    if (h.m === 8 && h.d === 15 && night) L("kumayl", "ليلة النصف من شعبان");
+    if (h.m === 12 && h.d === 9) L("arafa", "يوم عرفة");
+    if (h.m === 12 && h.d === 18) L("ghadir", "عيد الغدير");
+    if (h.m === 2 && (h.d === 20 || (h.d === 19 && night))) L("arbaeen", "الأربعين");
+    if (h.m === 1 && h.d <= 10) L("ashura", h.d === 10 ? "يوم عاشوراء" : "أيام عاشوراء");
+    if (oc && oc.real && /الإمام|السيدة|النبي|أبي الفضل/.test(oc.name)) L("jamia", "في ذكرى المناسبة");
+    if (!night && wdr === 5 && mins < 13 * 60) { L("nudba", "صباح الجمعة"); L("faraj", "مع الندبة"); }
+    if (!lead.length) L("sabah", "");
+    lead = lead.slice(0, 2);
     var list = lead.concat(["warith"]);
     ["sabah", "nudba", "kumayl", "faraj"].forEach(function (k) { if (list.length < 4 && list.indexOf(k) < 0) list.push(k); });
-    return { list: list, lead: lead, night: kumaylWin };
+    return { list: list, lead: lead, night: night, why: why };
   }
   var SUBS = { warith: "متاحة دائماً", faraj: "مع الندبة" };
   function renderTiles() {
@@ -1097,10 +1257,21 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     hl.list.forEach(function (k) {
       var d = DUAS[k], has = cands(k).length > 0, isLead = hl.lead.indexOf(k) >= 0;
       var t = k === "kumayl" ? fmtMin(state.night) : fmtMin(state.morning);
-      var sub = SUBS[k] && !(k === "faraj" && !isLead) ? SUBS[k] : d.when;
+      var sub0 = 0; var sub = (hl.why[k] || (SUBS[k] && !(k === "faraj" && !isLead) ? SUBS[k] : d.when));
       h += "<button class=\"tile" + (isLead ? " today" : "") + (has ? "" : " empty") + "\" type=\"button\" data-k=\"" + k + "\">" +
-        art(k) + (isLead ? "<em class=\"badge\">" + (hl.night && k === "kumayl" ? "الليلة" : "اليوم") + "</em>" : "") + "<span class=\"ic\">" + ICONS[d.icon] + "</span><b>" + d.name + "</b><span>" + (has ? sub : "لم تُضف ملفات الصوت بعد") + "</span></button>";
+        art(k) + (isLead ? "<em class=\"badge\">" + (hl.night ? "الليلة" : "اليوم") + "</em>" : "") + "<span class=\"ic\">" + ICONS[d.icon] + "</span><b>" + d.name + "</b><span>" + (has ? sub : "لم تُضف ملفات الصوت بعد") + "</span></button>";
     });
+    var hp = "";
+    hl.lead.forEach(function (k) {
+      var d = DUAS[k], has = cands(k).length > 0;
+      hp += "<button class=\"tile today" + (has ? "" : " empty") + "\" type=\"button\" data-k=\"" + k + "\">" + art(k) + "<em class=\"badge\">" + (hl.night ? "الليلة" : "اليوم") + "</em><span class=\"ic\">" + ICONS[d.icon] + "</span><b>" + d.name + "</b><span>" + (hl.why[k] || d.when) + "</span></button>";
+    });
+    var pbox = $("picks"), pkey = hp.replace(/a\d+-/g, "");
+    if (pbox.dataset.h !== pkey) {
+      var pf = document.activeElement && pbox.contains(document.activeElement) ? document.activeElement.dataset.k : null;
+      pbox.dataset.h = pkey; pbox.innerHTML = hp; applyPhotos(pbox);
+      if (pf) { var pt = pbox.querySelector("[data-k=\"" + pf + "\"]"); if (pt) pt.focus(); }
+    }
     var box = $("duas");
     if (box.dataset.h === h) return;
     var f = document.activeElement && box.contains(document.activeElement) ? document.activeElement.dataset.k : null;
@@ -1109,6 +1280,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     applyPhotos(box);
     if (f) { var t2 = box.querySelector("[data-k=\"" + f + "\"]"); if (t2) t2.focus(); }
   }
+  $("picks").addEventListener("click", function (e) { var b = e.target.closest(".tile"); if (b) openDua(b.dataset.k); });
   $("duas").addEventListener("click", function (e) { var b = e.target.closest(".tile"); if (b) openDua(b.dataset.k); });
 
 
@@ -1383,6 +1555,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
       tiles.push("<button type=\"button\" class=\"happ\" style=\"--c:" + (m ? m.c : "#3b4a54") + "\" " + key + ">" + (editing ? "<u>✎</u>" : "") + face + "<span class=\"en\">" + escH(nm) + "</span></button>");
     });
     if (editing && list.length < MAXHOME) tiles.push("<button type=\"button\" class=\"happ add\" data-add=\"1\"><i>+</i><span>إضافة تطبيق</span></button>");
+    tiles.push("<button type=\"button\" class=\"happ libt\" data-lib=\"1\"><i>✦</i><span>الأدعية والزيارات</span></button>");
     tiles.push("<button type=\"button\" class=\"happ\" style=\"--c:" + ALL.c + "\" data-all=\"1\"><i>" + ALL.g + "</i><span>" + ALL.n + "</span></button>");
     host.style.setProperty("--n", tiles.length);
     host.classList.toggle("editing", editing);
@@ -1396,6 +1569,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
   $("homeApps").addEventListener("click", function (e) {
     if (e.target.closest("#editApps")) { editing = !editing; renderHome("edit"); return; }
     var b = e.target.closest(".happ"); if (!b) return;
+    if (b.dataset.lib) { showView("lib"); var fl = document.querySelector("#libList .tile"); if (fl) fl.focus(); return; }
     if (b.dataset.all) { showView("apps"); var f = document.querySelector("#appsGrid .app-btn, #appsBack"); if (f) f.focus(); return; }
     if (b.dataset.add) { pickMode = true; $("appsTitle").textContent = "اختر التطبيق اللي تبي تضيفه"; showView("apps"); var f2 = document.querySelector("#appsGrid .app-btn, #appsBack"); if (f2) f2.focus(); return; }
     if (editing) { openAppMenu(b.dataset.hp); return; }
@@ -1768,26 +1942,37 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
 
   /* مواقيت الصلاة (Aladhan): الطريقة الجعفرية افتراضياً، أو الطريقة الرسمية للبلد */
   var PR = null, PRERR = false, prDay = "";
-  var PRN = [["Fajr", "الفجر"], ["Sunrise", "الشروق"], ["Dhuhr", "الظهر"], ["Maghrib", "المغرب"], ["Isha", "العشاء"]];
+  var PRN = [["Fajr", "الفجر"], ["Sunrise", "الشروق"], ["Dhuhr", "الظهرين"], ["Maghrib", "المغرب"], ["Isha", "العشائين"]];
+  var PRS = PRN.concat([["Midnight", "منتصف الليل"]]);
+  /* الأوقات الخام من الخدمة + ضبطك باليدوي بالدقائق. منتصف الليل (الجعفري) = منتصف المدة بين الغروب وفجر اليوم التالي */
+  function tuned(raw) {
+    var t = {};
+    PRN.forEach(function (p) { t[p[0]] = raw[p[0]] + (state.ptune[p[0]] || 0); });
+    var mid = raw.Sunset + (raw.Fajr + 1440 - raw.Sunset) / 2;
+    t.Midnight = Math.round(mid + (state.ptune.Midnight || 0)) % 1440;
+    return t;
+  }
+  function retune() { if (PR && PR.raw) { PR.t = tuned(PR.raw); renderPrayers(); } }
   function prMethod() { return state.pmethod === "official" ? curLoc().c.off : 0; }
   function pad2(n) { return ("0" + n).slice(-2); }
   function loadPrayers() {
     var L = curLoc(), n = new Date(), m = prMethod();
     prDay = n.getFullYear() + "-" + n.getMonth() + "-" + n.getDate();
-    var key = [m, L.city[1], L.city[2], prDay].join("|");
+    var key = ["v2", m, L.city[1], L.city[2], prDay].join("|");
     var c = lsGet("tv-hijri-pr");
-    if (c && c.key === key) { PR = c; PRERR = false; renderPrayers(); return; }
+    if (c && c.key === key && c.raw) { PR = c; PR.t = tuned(PR.raw); PRERR = false; renderPrayers(); return; }
     PR = null; PRERR = false; renderPrayers();
     var url = "https://api.aladhan.com/v1/timings/" + pad2(n.getDate()) + "-" + pad2(n.getMonth() + 1) + "-" + n.getFullYear() + "?latitude=" + L.city[1] + "&longitude=" + L.city[2] + "&method=" + m;
     getJSON(url).then(function (j) {
       var tm = j && j.data && j.data.timings; if (!tm) throw new Error("bad");
       var t = {};
-      PRN.forEach(function (p) {
+      PRN.concat([["Sunset"]]).forEach(function (p) {
         var mt = /(\d{1,2}):(\d{2})/.exec(String(tm[p[0]])); if (!mt) throw new Error("bad");
         t[p[0]] = +mt[1] * 60 + +mt[2];
       });
-      PR = { key: key, tz: (j.data.meta && j.data.meta.timezone) || "", t: t };
-      lsSet("tv-hijri-pr", PR); PRERR = false; renderPrayers();
+      PR = { key: key, tz: (j.data.meta && j.data.meta.timezone) || "", raw: t };
+      PR.t = tuned(t);
+      lsSet("tv-hijri-pr", { key: PR.key, tz: PR.tz, raw: PR.raw }); PRERR = false; renderPrayers();
     }).catch(function () { PRERR = true; renderPrayers(); });
   }
   function nowMin(tz) {
@@ -1808,8 +1993,8 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     for (var i = 0; i < order.length; i++) if (PR.t[order[i]] > now) { nextK = order[i]; diff = PR.t[nextK] - now; break; }
     if (!nextK) { nextK = "Fajr"; diff = PR.t.Fajr + 1440 - now; }
     var h = head;
-    PRN.forEach(function (p) {
-      var isNext = p[0] === nextK, dim = p[0] === "Sunrise";
+    PRS.forEach(function (p) {
+      var isNext = p[0] === nextK, dim = p[0] === "Sunrise" || p[0] === "Midnight";
       h += "<div class=\"pr" + (isNext ? " next" : "") + (dim ? " dim" : "") + "\"><span>" + p[1] + "</span><b>" + fmtMin(PR.t[p[0]]) + "</b><i>" + (isNext ? "بعد " + span(diff) : "") + "</i></div>";
     });
     if (box.dataset.h !== h) { box.dataset.h = h; box.innerHTML = h; }
@@ -1823,7 +2008,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
 
   /* الأذان والتنبيه: ملفات الصوت audio/adhan-1.mp3 … ، وللفجر اختيارياً audio/adhan-fajr-1.mp3 … */
   var ADHAN_VOICES = [{ n: "الصوت الأول" }, { n: "الصوت الثاني" }, { n: "الصوت الثالث" }];
-  var ADHAN_PR = [["Fajr", "الفجر"], ["Dhuhr", "الظهر"], ["Maghrib", "المغرب"], ["Isha", "العشاء"]];
+  var ADHAN_PR = [["Fajr", "الفجر"], ["Dhuhr", "الظهرين"], ["Maghrib", "المغرب"], ["Isha", "العشائين"]];
   var adhanOk = {}, adhanAudio = new Audio(), adhanTimer = 0;
   function probeFile(f, cb) {
     if (f in adhanOk) { cb(adhanOk[f]); return; }
@@ -1993,7 +2178,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
   function svTick() {
     $("svTime").textContent = $("time").textContent + " " + ($("period").textContent || "");
     $("svDate").textContent = ($("greg").textContent || "");
-    $("svTxt").textContent = ($("dText").textContent || "");
+    $("svTxt").textContent = svText();
     var p = SV_POS[svPos++ % SV_POS.length], st = $("svInfo").style;
     st.right = p.right; st.left = p.left; st.top = p.top; st.bottom = p.bottom;
     if (SHRINES.length) { svIdx += 1; svShow(svIdx); }
@@ -2010,7 +2195,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
       svPos = 0;
       $("svTime").textContent = $("time").textContent + " " + ($("period").textContent || "");
       $("svDate").textContent = $("greg").textContent || "";
-      $("svTxt").textContent = $("dText").textContent || "";
+      $("svTxt").textContent = svText();
       if (SHRINES.length) svShow(svIdx);
       svTimer = setInterval(svTick, state.saver.every * 1000);
     });
