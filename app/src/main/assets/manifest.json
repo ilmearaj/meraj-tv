@@ -1,0 +1,76 @@
+{
+ "duas": [
+  {
+   "id": "kisa",
+   "name": "حديث الكساء",
+   "group": "أدعية",
+   "text": true,
+   "voices": [
+    {
+     "n": "مرتضى قريش",
+     "f": "audio/kisa-1.mp3"
+    },
+    {
+     "n": "علي فاني",
+     "f": "audio/kisa-2.mp3"
+    }
+   ]
+  },
+  {
+   "id": "nudba",
+   "name": "دعاء الندبة",
+   "group": "أدعية",
+   "text": true,
+   "voices": [
+    {
+     "n": "السيد مهدي الجزائري",
+     "f": "audio/nudba-1.mp3"
+    },
+    {
+     "n": "مرتضى قريش",
+     "f": "audio/nudba-2.mp3"
+    },
+    {
+     "n": "علي حمادي",
+     "f": "audio/nudba-3.mp3"
+    }
+   ]
+  },
+  {
+   "id": "kumayl",
+   "name": "دعاء كميل",
+   "group": "أدعية",
+   "text": true,
+   "voices": [
+    {
+     "n": "الشيخ حسين الأكرف",
+     "f": "audio/kumayl-1.mp3"
+    },
+    {
+     "n": "علي بوحمد",
+     "f": "audio/kumayl-2.mp3"
+    },
+    {
+     "n": "محسن فرهمند وعلي فاني",
+     "f": "audio/kumayl-3.mp3"
+    },
+    {
+     "n": "السيد مصطفى الموسوي وعلي فاني ومحسن فرهمند",
+     "f": "audio/kumayl-4.mp3"
+    }
+   ]
+  },
+  {
+   "id": "warith",
+   "name": "زيارة وارث",
+   "group": "زيارات",
+   "text": true,
+   "voices": [
+    {
+     "n": "علي فاني",
+     "f": "audio/warith-1.mp3"
+    }
+   ]
+  }
+ ]
+}
