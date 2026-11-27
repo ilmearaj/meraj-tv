@@ -128,6 +128,10 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         web.onResume();
+        web.resumeTimers();
+        web.setVisibility(View.VISIBLE);
+        web.invalidate();
+        web.postInvalidateDelayed(400);
         web.requestFocus(View.FOCUS_DOWN);
         web.evaluateJavascript("window.__tvResume && window.__tvResume();", null);
     }
@@ -137,6 +141,10 @@ public class MainActivity extends Activity {
     protected void onNewIntent(android.content.Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
+        web.onResume();
+        web.resumeTimers();
+        web.invalidate();
+        web.postInvalidateDelayed(400);
         if (intent != null && intent.hasCategory(android.content.Intent.CATEGORY_HOME)) {
             web.evaluateJavascript("window.__tvHome && window.__tvHome();", null);
         }
