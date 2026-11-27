@@ -556,6 +556,13 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
 .sec[data-g="2"].on { display: block; column-count: 2; column-gap: 2.4rem; }
 .sec[data-g="2"] #tune, .sec[data-g="2"] #reciters, .sec[data-g="2"] #occPrev { break-inside: avoid; }
 .sec[data-g="2"] h3 { break-after: avoid; }
+
+/* تكبير العنصر المحدد وتصغير الباقي قليلاً (سائل) */
+:root[data-ui="f"] .homeapps .happ, :root[data-ui="f"] .events .tile { transition: transform .35s cubic-bezier(.2,.8,.2,1), opacity .35s, box-shadow .3s, border-color .3s; }
+:root[data-ui="f"] .homeapps:has(.happ:focus-visible) .happ:not(:focus-visible),
+:root[data-ui="f"] .events:has(.tile:focus-visible) .tile:not(:focus-visible) { transform: scale(.9); opacity: .62; }
+:root[data-ui="f"] .happ:focus-visible { transform: scale(1.18); }
+:root[data-ui="f"] .events .tile:focus-visible { transform: scale(1.07); z-index: 2; }
 </style>
 </head>
 <body>
