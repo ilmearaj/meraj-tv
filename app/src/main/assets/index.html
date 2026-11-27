@@ -582,6 +582,17 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
 :root[data-ui="f"] .homeapps .happ i, :root[data-ui="f"] .homeapps .happ i.ico { width: 3.2rem; height: 3.2rem; font-size: 1.9rem; border-radius: 1.1rem; }
 .hedit { width: auto; min-width: 5rem; padding: 0 1.2rem; border-radius: 99px; font-size: 1.3rem; }
 .hedit { position: fixed; left: 2.4rem; bottom: 2rem; top: auto; z-index: 3; }
+
+/* دعاء اليوم في مقدمة صف التطبيقات */
+.homeapps .picks { display: contents; }
+.homeapps .picks .tile { grid-column: span 2; min-height: 6.4rem; height: 100%; padding: .5rem 1.2rem; border-radius: 2.4rem; }
+:root[data-ui="f"] .events { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) !important; }
+:root[data-ui="f"] .events > .next { grid-column: 2 !important; }
+:root[data-ui="f"] .homeapps .picks .tile { border: 1.5px solid rgba(255, 255, 255, .5); }
+.homeapps { align-items: stretch; }
+:root[data-ui="f"] .homeapps .happ, .homeapps .picks .tile { height: 6.8rem; min-height: 6.8rem; align-self: center; }
+:root[data-ui="f"] .homeapps .happ { font-size: 1.4rem; white-space: nowrap; }
+:root[data-ui="f"] .homeapps .happ span { white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -1487,7 +1498,7 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
     var pbox = $("picks"), pkey = hp.replace(/a\d+-/g, "");
     if (pbox.dataset.h !== pkey) {
       var pf = document.activeElement && pbox.contains(document.activeElement) ? document.activeElement.dataset.k : null;
-      pbox.dataset.h = pkey; pbox.innerHTML = hp; applyPhotos(pbox);
+      pbox.dataset.h = pkey; pbox.innerHTML = hp; applyPhotos(pbox); if (typeof homeCols === "function") homeCols();
       if (pf) { var pt = pbox.querySelector("[data-k=\"" + pf + "\"]"); if (pt) pt.focus(); }
     }
     var box = $("duas");
@@ -1789,6 +1800,11 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
   }
   var editing = false, pickMode = false, menuPkg = null;
   var ALL = HOME_APPS[HOME_APPS.length - 1];
+  var picksEl = document.getElementById("picks");
+  function homeCols() {
+    var h = document.getElementById("homeApps"); if (!h) return;
+    h.style.setProperty("--n", h.querySelectorAll(".happ").length + 2 * picksEl.children.length);
+  }
   function renderHome(focusKey) {
     var host = $("homeApps"), list = myApps().filter(function (a) { return !HAS_APPS || isInstalled(a.p); });
     var tiles = [];
@@ -1801,9 +1817,10 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
     if (editing && list.length < MAXHOME) tiles.push("<button type=\"button\" class=\"happ add\" data-add=\"1\"><i>+</i><span>إضافة تطبيق</span></button>");
     tiles.push("<button type=\"button\" class=\"happ libt\" data-lib=\"1\"><i>✦</i><span>الأدعية والزيارات</span></button>");
     tiles.push("<button type=\"button\" class=\"happ\" style=\"--c:" + ALL.c + "\" data-all=\"1\"><i>" + ALL.g + "</i><span>" + ALL.n + "</span></button>");
-    host.style.setProperty("--n", tiles.length);
     host.classList.toggle("editing", editing);
     host.innerHTML = tiles.join("") + (editing ? "<button type=\"button\" class=\"hedit\" id=\"editApps\" aria-label=\"تم\">✓ تم</button>" : "");
+    host.insertBefore(picksEl, host.firstChild);
+    homeCols();
     var f = null;
     if (focusKey === "edit") f = $("editApps") || host.querySelector(".happ");
     else if (focusKey) f = host.querySelector("[data-hp=\"" + focusKey + "\"]");
