@@ -575,6 +575,14 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
 :root[data-ui="f"] .vchip { border-radius: 99px; background: rgba(255, 255, 255, .14); border: 1px solid rgba(255, 255, 255, .4); }
 :root[data-ui="f"] .vchip:focus-visible { background: rgba(255, 255, 255, .88); color: #10231a; outline: none; }
 body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
+
+/* الرئيسية: بدون كلمة «التطبيقات»، وتطبيقات أقصر */
+.homeapps::before { content: none !important; display: none !important; }
+:root[data-ui="f"] .homeapps .happ { min-height: 6.4rem; gap: .35rem; border-radius: 2.4rem; padding: .5rem 1rem; font-size: 1.5rem; }
+:root[data-ui="f"] .homeapps .happ i, :root[data-ui="f"] .homeapps .happ i.ico { width: 3.2rem; height: 3.2rem; font-size: 1.9rem; border-radius: 1.1rem; }
+.hedit { width: auto; min-width: 5rem; padding: 0 1.2rem; border-radius: 99px; font-size: 1.3rem; }
+.hedit { position: fixed; left: 2.4rem; bottom: 2rem; top: auto; z-index: 3; }
+:root[data-ui="f"] .events { min-height: 24rem; grid-template-rows: minmax(0, 1fr) auto; }
 </style>
 </head>
 <body>
@@ -1796,9 +1804,9 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
     tiles.push("<button type=\"button\" class=\"happ\" style=\"--c:" + ALL.c + "\" data-all=\"1\"><i>" + ALL.g + "</i><span>" + ALL.n + "</span></button>");
     host.style.setProperty("--n", tiles.length);
     host.classList.toggle("editing", editing);
-    host.innerHTML = tiles.join("") + "<button type=\"button\" class=\"hedit\" id=\"editApps\" aria-label=\"" + (editing ? "تم" : "تعديل التطبيقات") + "\">" + (editing ? "✓" : "✎") + "</button>";
+    host.innerHTML = tiles.join("") + (editing ? "<button type=\"button\" class=\"hedit\" id=\"editApps\" aria-label=\"تم\">✓ تم</button>" : "");
     var f = null;
-    if (focusKey === "edit") f = $("editApps");
+    if (focusKey === "edit") f = $("editApps") || host.querySelector(".happ");
     else if (focusKey) f = host.querySelector("[data-hp=\"" + focusKey + "\"]");
     if (f) f.focus();
   }
@@ -1813,6 +1821,33 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
     if (editing) { openAppMenu(b.dataset.hp); return; }
     launchApp(b.dataset.hp);
   });
+
+  /* ضغطة طويلة على زر موافق فوق أي تطبيق: يفتح التحرير (إضافة وحذف وتحريك) */
+  (function () {
+    var holdT = 0, holdBtn = null, fired = false;
+    function startEdit(b) {
+      editing = true; fired = true;
+      if (b && b.dataset.hp) { renderHome(b.dataset.hp); openAppMenu(b.dataset.hp); }
+      else renderHome("edit");
+    }
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter" && e.key !== "NumpadEnter") return;
+      var b = e.target && e.target.closest ? e.target.closest("#homeApps .happ") : null;
+      if (!b || editing) return;
+      e.preventDefault(); e.stopPropagation();
+      if (e.repeat || holdT) return;
+      holdBtn = b; fired = false;
+      holdT = setTimeout(function () { holdT = 0; startEdit(holdBtn); }, 650);
+    }, true);
+    document.addEventListener("keyup", function (e) {
+      if (e.key !== "Enter" && e.key !== "NumpadEnter") return;
+      if (!holdT) { fired = false; return; }
+      clearTimeout(holdT); holdT = 0;
+      var b = holdBtn; holdBtn = null;
+      if (b && document.body.contains(b) && !fired) b.click();
+    }, true);
+    $("homeApps").addEventListener("contextmenu", function (e) { var b = e.target.closest(".happ"); if (!b) return; e.preventDefault(); startEdit(b); });
+  })();
 
   /* قائمة تحريك التطبيق */
   function homeIdx(pkg) { var l = myApps(); for (var i = 0; i < l.length; i++) if (l[i].p === pkg) return i; return -1; }
