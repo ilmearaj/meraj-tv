@@ -826,7 +826,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     ["green", "زمردي", "#4fd1a5"], ["blue", "أزرق", "#6ea8ff"], ["maroon", "عنابي", "#e0707f"],
     ["violet", "بنفسجي", "#b69cff"], ["gold", "ذهبي", "#e3b54a"], ["light", "فاتح", "#ffffff"]
   ];
-  var state = { ptune: { Fajr: 0, Sunrise: 0, Dhuhr: 0, Maghrib: 0, Isha: 0, Midnight: 0 }, palette: "green", ui: "f", uiv: 2, offset: 0, auto: { sabah: true, nudba: true, kumayl: false }, morning: 360, night: 1200, rotate: true, voice: {}, start: "home", liveSound: false, readWith: true, loc: { c: "KW", i: 0 }, pmethod: "jafari", adhan: { on: true, voice: 0, pr: { Fajr: false, Dhuhr: true, Maghrib: true, Isha: true }, pre: 0 }, rfont: 2.6, rspeed: 24, homeApps: null, speed: 1, saver: { on: true, after: 300, every: 30 }, bg: { mode: "fixed", every: 60 } };
+  var state = { ptune: { Fajr: 0, Sunrise: 0, Dhuhr: 0, Maghrib: 0, Isha: 0, Midnight: 0 }, palette: "green", ui: "f", uiv: 2, locAuto: true, geo: null, offset: 0, auto: { sabah: true, nudba: true, kumayl: false }, morning: 360, night: 1200, rotate: true, voice: {}, start: "home", liveSound: false, readWith: true, loc: { c: "KW", i: 0 }, pmethod: "jafari", adhan: { on: true, voice: 0, pr: { Fajr: false, Dhuhr: true, Maghrib: true, Isha: true }, pre: 0 }, rfont: 2.6, rspeed: 24, homeApps: null, speed: 1, saver: { on: true, after: 300, every: 30 }, bg: { mode: "fixed", every: 60 } };
   try {
     var saved = JSON.parse(localStorage.getItem("tv-hijri") || "{}");
     if (saved.palette) state.palette = saved.palette;
@@ -838,7 +838,9 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     if (typeof saved.night === "number") state.night = saved.night;
     if (typeof saved.rotate === "boolean") state.rotate = saved.rotate;
     if (typeof saved.readWith === "boolean") state.readWith = saved.readWith;
-    if (saved.loc && typeof saved.loc.c === "string" && typeof saved.loc.i === "number") state.loc = { c: saved.loc.c, i: saved.loc.i };
+    if (saved.loc && typeof saved.loc.c === "string" && typeof saved.loc.i === "number") { state.loc = { c: saved.loc.c, i: saved.loc.i }; state.locAuto = false; }
+    if (typeof saved.locAuto === "boolean") state.locAuto = saved.locAuto;
+    if (saved.geo && isFinite(saved.geo.lat) && isFinite(saved.geo.lon)) state.geo = { lat: +saved.geo.lat, lon: +saved.geo.lon, city: String(saved.geo.city || "") };
     if (saved.pmethod === "jafari" || saved.pmethod === "official") state.pmethod = saved.pmethod;
     if (saved.adhan) {
       if (typeof saved.adhan.on === "boolean") state.adhan.on = saved.adhan.on;
@@ -1989,6 +1991,35 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     var c = LOCS.filter(function (x) { return x.id === state.loc.c; })[0] || LOCS[0];
     return { c: c, city: c.cities[state.loc.i] || c.cities[0] };
   }
+  /* الموقع التلقائي: حسب موقع التلفزيون (IP) مع احتياط من المنطقة الزمنية */
+  function hav(a, b, c, d) { var t = Math.PI / 180, x = (c - a) * t, y = (d - b) * t, q = Math.sin(x / 2) * Math.sin(x / 2) + Math.cos(a * t) * Math.cos(c * t) * Math.sin(y / 2) * Math.sin(y / 2); return 12742 * Math.asin(Math.sqrt(q)); }
+  function ensureGeo() {
+    var g = LOCS.filter(function (x) { return x.id === "GEO"; })[0];
+    if (!g) { g = { id: "GEO", n: "موقعي الحالي", off: 3, cities: [] }; LOCS.push(g); }
+    if (state.geo) g.cities = [["موقعك الحالي" + (state.geo.city ? " · " + state.geo.city : ""), state.geo.lat, state.geo.lon]];
+    return g;
+  }
+  if (state.geo) ensureGeo();
+  function applyGeo(lat, lon, city) {
+    var best = null, bd = 1e9, nl;
+    LOCS.forEach(function (c) { if (c.id === "GEO") return; c.cities.forEach(function (ct, k) { var d = hav(lat, lon, ct[1], ct[2]); if (d < bd) { bd = d; best = { c: c.id, i: k }; } }); });
+    if (bd <= 100) { nl = best; state.geo = null; } else { state.geo = { lat: lat, lon: lon, city: city || "" }; ensureGeo(); nl = { c: "GEO", i: 0 }; }
+    if (state.loc.c !== nl.c || state.loc.i !== nl.i || nl.c === "GEO") { state.loc = nl; save(); syncLocSettings(); reloadLoc(); }
+  }
+  var TZMAP = { "Asia/Kuwait": ["KW", 0], "America/Toronto": ["CA", 0], "America/New_York": ["US", 1], "America/Detroit": ["US", 0], "America/Los_Angeles": ["US", 2], "Asia/Baghdad": ["IQ", 2], "Asia/Tehran": ["IR", 2], "Asia/Riyadh": ["SA", 5], "Asia/Bahrain": ["BH", 0], "Asia/Qatar": ["QA", 0], "Asia/Dubai": ["AE", 0], "Asia/Muscat": ["OM", 0], "Asia/Beirut": ["LB", 0], "Asia/Damascus": ["SY", 0], "Asia/Amman": ["JO", 0], "Africa/Cairo": ["EG", 0], "Europe/Istanbul": ["TR", 0], "Asia/Baku": ["AZ", 0], "Asia/Karachi": ["PK", 0], "Asia/Kolkata": ["IN", 1], "Europe/London": ["GB", 0], "Europe/Berlin": ["DE", 0], "Australia/Sydney": ["AU", 0] };
+  function tzLoc() {
+    try { var z = Intl.DateTimeFormat().resolvedOptions().timeZone, m = TZMAP[z]; if (m) { state.loc = { c: m[0], i: m[1] }; return true; } } catch (e) {}
+    return false;
+  }
+  function detectLoc(force) {
+    if (!state.locAuto) return;
+    var last = lsGet("tv-geo-at") || 0;
+    if (!force && Date.now() - last < 3600 * 1000) return;
+    getJSON("https://get.geojs.io/v1/ip/geo.json").then(function (r) {
+      var la = parseFloat(r.latitude), lo = parseFloat(r.longitude);
+      if (isFinite(la) && isFinite(lo)) { lsSet("tv-geo-at", Date.now()); applyGeo(la, lo, r.city || ""); }
+    }).catch(function () {});
+  }
   function lsGet(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } }
   function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   function getJSON(url) {
@@ -2209,15 +2240,16 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
   }
 
   function buildLocSettings() {
-    $("locC").innerHTML = LOCS.map(function (c) { return "<button type=\"button\" data-c=\"" + c.id + "\" aria-pressed=\"false\">" + c.n + "</button>"; }).join("");
+    $("locC").innerHTML = "<button type=\"button\" data-c=\"auto\" aria-pressed=\"false\">تلقائي (موقع التلفزيون)</button>" + LOCS.filter(function (c) { return c.id !== "GEO"; }).map(function (c) { return "<button type=\"button\" data-c=\"" + c.id + "\" aria-pressed=\"false\">" + c.n + "</button>"; }).join("");
     $("locM").innerHTML = "<button type=\"button\" data-m=\"jafari\" aria-pressed=\"false\">جعفري (قم)</button><button type=\"button\" data-m=\"official\" aria-pressed=\"false\">الطريقة الرسمية للبلد</button>";
     $("locC").addEventListener("click", function (e) {
       var b = e.target.closest("button"); if (!b) return;
-      state.loc = { c: b.dataset.c, i: 0 }; save(); syncLocSettings(); reloadLoc();
+      if (b.dataset.c === "auto") { state.locAuto = true; save(); syncLocSettings(); detectLoc(true); return; }
+      state.locAuto = false; state.loc = { c: b.dataset.c, i: 0 }; save(); syncLocSettings(); reloadLoc();
     });
     $("locI").addEventListener("click", function (e) {
       var b = e.target.closest("button"); if (!b) return;
-      state.loc.i = +b.dataset.i; save(); syncLocSettings(); reloadLoc();
+      state.locAuto = false; state.loc.i = +b.dataset.i; save(); syncLocSettings(); reloadLoc();
     });
     $("locM").addEventListener("click", function (e) {
       var b = e.target.closest("button"); if (!b) return;
@@ -2226,7 +2258,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
   }
   function syncLocSettings() {
     var L = curLoc(), i, cs = $("locC").children, ms = $("locM").children;
-    for (i = 0; i < cs.length; i++) cs[i].setAttribute("aria-pressed", String(cs[i].dataset.c === L.c.id));
+    for (i = 0; i < cs.length; i++) cs[i].setAttribute("aria-pressed", String(cs[i].dataset.c === "auto" ? state.locAuto : (!state.locAuto && cs[i].dataset.c === L.c.id)));
     $("locI").innerHTML = L.c.cities.map(function (c, k) { return "<button type=\"button\" data-i=\"" + k + "\" aria-pressed=\"" + (L.c.cities[state.loc.i] === c || (!L.c.cities[state.loc.i] && k === 0)) + "\">" + c[0] + "</button>"; }).join("");
     for (i = 0; i < ms.length; i++) ms[i].setAttribute("aria-pressed", String(ms[i].dataset.m === state.pmethod));
   }
@@ -2361,7 +2393,8 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
   }
   buildSaverSettings(); syncSaverSettings(); if (state.bg.mode === "photos") applyBg();
   buildPanel();
-  buildLocSettings(); syncLocSettings(); reloadLoc();
+  if (state.locAuto && !state.geo && !lsGet("tv-geo-at")) { tzLoc(); }
+  buildLocSettings(); syncLocSettings(); reloadLoc(); detectLoc();
   buildAdhanSettings(); syncAdhanSettings();
   buildAudioSettings();
   syncAudioSettings();
