@@ -8,7 +8,10 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.media.AudioAttributes;
+import android.media.AudioFocusRequest;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
@@ -253,6 +256,43 @@ public class MainActivity extends Activity {
                 return true;
             } catch (Exception e) {
                 return false;
+            }
+        }
+
+        private AudioFocusRequest focusReq;
+        private final AudioManager.OnAudioFocusChangeListener focusL = new AudioManager.OnAudioFocusChangeListener() {
+            @Override
+            public void onAudioFocusChange(int change) {
+            }
+        };
+
+        /** يطلب/يترك تركيز الصوت: التطبيقات الثانية (يوتيوب، نتفلكس...) توقف مؤقتاً أثناء الأذان. */
+        @JavascriptInterface
+        public void focus(final boolean on) {
+            try {
+                AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                if (on) {
+                    if (Build.VERSION.SDK_INT >= 26) {
+                        AudioAttributes aa = new AudioAttributes.Builder()
+                                .setUsage(AudioAttributes.USAGE_MEDIA)
+                                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                                .build();
+                        focusReq = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE)
+                                .setAudioAttributes(aa)
+                                .setOnAudioFocusChangeListener(focusL)
+                                .build();
+                        am.requestAudioFocus(focusReq);
+                    } else {
+                        am.requestAudioFocus(focusL, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE);
+                    }
+                } else {
+                    if (Build.VERSION.SDK_INT >= 26) {
+                        if (focusReq != null) am.abandonAudioFocusRequest(focusReq);
+                    } else {
+                        am.abandonAudioFocus(focusL);
+                    }
+                }
+            } catch (Exception ignored) {
             }
         }
 

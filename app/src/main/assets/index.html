@@ -594,11 +594,24 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
 :root[data-ui="f"] .homeapps .happ { font-size: 1.4rem; white-space: nowrap; }
 :root[data-ui="f"] .homeapps .happ span { white-space: nowrap; }
 #adVolV { width: auto !important; min-width: 6.5rem; border-radius: 99px !important; padding: 0 1rem; }
+
+/* الأذان: شاشة كاملة توقف كل شي لين ينتهي، أو ٥ ضغطات رجوع */
+.adhan-lock { position: fixed; inset: 0; z-index: 300; display: grid; place-items: center; background: radial-gradient(60% 55% at 15% 0%, color-mix(in srgb, var(--accent) 32%, transparent), transparent 70%), radial-gradient(55% 60% at 100% 100%, color-mix(in srgb, var(--accent2) 24%, transparent), transparent 70%), #020a08; }
+.adhan-lock[hidden] { display: none; }
+.al-card { display: grid; justify-items: center; gap: 1.2rem; text-align: center; padding: 4rem 6rem; border-radius: 4rem; background: linear-gradient(135deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, .05)); border: 1.5px solid rgba(255, 255, 255, .35); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4); max-width: 80vw; }
+.al-ic { font-style: normal; font-size: 6rem; line-height: 1; }
+.al-card b { font-family: var(--font-display); font-size: 4rem; color: var(--accent2); }
+.al-card span { font-size: 1.8rem; color: var(--muted); }
+.al-dots { display: flex; gap: .9rem; margin-top: 1rem; }
+.al-dots i { width: 1.2rem; height: 1.2rem; border-radius: 50%; background: rgba(255, 255, 255, .25); }
+.al-dots i.on { background: var(--accent); }
+.al-card p { margin: .6rem 0 0; font-size: 1.4rem; color: var(--muted); }
 </style>
 </head>
 <body>
 <div class="saver" id="saver" hidden aria-hidden="true"><div class="sv-l" id="svA"></div><div class="sv-l" id="svB"></div><div class="sv-info" id="svInfo"><div class="sv-time" id="svTime"></div><div class="sv-date" id="svDate"></div><div class="sv-txt" id="svTxt"></div></div></div>
 <div class="ambient" id="ambient" aria-hidden="true"><div class="amb-medal" id="ambMedal"></div><div class="amb-photo" id="ambPhoto"></div></div>
+<div class="adhan-lock" id="adhanLock" hidden role="alertdialog" aria-live="assertive"><div class="al-card"><i class="al-ic">🕌</i><b id="alT"></b><span id="alS"></span><div class="al-dots" id="alDots" aria-hidden="true"></div><p>لإغلاق الأذان واستكمال التلفزيون اضغط زر الرجوع ٥ مرات</p></div></div>
 <div class="adhan-bar" id="adhanBar" hidden role="status" aria-live="assertive"><div class="adhan-txt"><b id="adhanT"></b><span id="adhanS"></span></div><button type="button" class="btn" id="adhanStop">إيقاف</button></div>
 <div class="wx" id="wx" hidden aria-label="حالة الطقس"><span class="wx-ic" id="wxIc"></span><b id="wxT"></b><span id="wxD"></span><i id="wxC"></i></div>
 <div class="shell" dir="rtl" lang="ar">
@@ -2136,6 +2149,7 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
   /* زر الرجوع في الريموت: يغلق أعلى شيء مفتوح. يرجع true إذا أغلق شيئاً */
   window.__tvBack = function () {
     if (saverOn) { stopSaver(); return true; }
+    if (alock.on) { adhanBack(); return true; }
     if (!$("adhanBar").hidden) { hideAdhan(); return true; }
     if (!$("vMenu").hidden) { closeVMenu(true); return true; }
     if (!$("appMenu").hidden) { closeAppMenu(); return true; }
@@ -2388,6 +2402,40 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
     } catch (e) {}
   }
   /* مستوى الأذان مستقل: يضبط صوت التلفزيون (من تطبيق الأندرويد) وقت الأذان ثم يرجعه */
+  var alock = { on: false, n: 0, last: 0, resume: false, prevFocus: null };
+  function alDots() { var h = ""; for (var i = 0; i < 5; i++) h += "<i" + (i < alock.n ? " class=\"on\"" : "") + "></i>"; $("alDots").innerHTML = h; }
+  function lockAdhan(title, sub) {
+    if (alock.on) return;
+    alock.on = true; alock.n = 0; alock.last = 0;
+    alock.prevFocus = document.activeElement;
+    alock.resume = !!(cur.k && !audio.paused);
+    try { audio.pause(); } catch (e) {}
+    try { if (saverOn) stopSaver(); } catch (e) {}
+    $("alT").textContent = title; $("alS").textContent = sub; alDots();
+    $("adhanLock").hidden = false;
+    try { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } catch (e) {}
+    try { if (window.Android && window.Android.focus) window.Android.focus(true); } catch (e) {}
+  }
+  function unlockAdhan() {
+    if (!alock.on) return;
+    alock.on = false; $("adhanLock").hidden = true;
+    try { if (window.Android && window.Android.focus) window.Android.focus(false); } catch (e) {}
+    if (alock.resume) { try { var pp = audio.play(); if (pp && pp.catch) pp.catch(function () {}); } catch (e) {} }
+    alock.resume = false;
+    try { if (alock.prevFocus && document.body.contains(alock.prevFocus)) alock.prevFocus.focus(); } catch (e) {}
+  }
+  function adhanBack() {
+    var n = Date.now();
+    if (n - alock.last < 200) return;
+    if (n - alock.last > 4000) alock.n = 0;
+    alock.last = n; alock.n++; alDots();
+    if (alock.n >= 5) hideAdhan();
+  }
+  window.addEventListener("keydown", function (e) {
+    if (!alock.on) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    if (e.key === "Escape" || e.key === "GoBack" || e.key === "BrowserBack" || e.keyCode === 4) adhanBack();
+  }, true);
   var adhanPrevVol = null;
   function setAdhanLevel() {
     var v = state.adhan.vol || 30;
@@ -2405,6 +2453,7 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
   }
   function hideAdhan() {
     restoreAdhanLevel();
+    unlockAdhan();
     clearTimeout(adhanTimer);
     $("adhanBar").hidden = true;
     adhanAudio.pause();
@@ -2422,13 +2471,13 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
   function playAdhanSound(pk, onFail) {
     var files = adhanFiles(pk);
     (function next(i) {
-      if (i >= files.length) { chime(); return; }
+      if (i >= files.length) { chime(); unlockAdhan(); return; }
       probeFile(files[i], function (ok) {
         if (!ok) { next(i + 1); return; }
         adhanAudio.src = files[i];
         setAdhanLevel();
         var p = adhanAudio.play();
-        if (p && p.catch) p.catch(function () { restoreAdhanLevel(); if (onFail) onFail(); });
+        if (p && p.catch) p.catch(function () { restoreAdhanLevel(); unlockAdhan(); if (onFail) onFail(); });
       });
     })(0);
   }
@@ -2437,9 +2486,8 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
     var nm = "", i, city = curLoc().city[0];
     for (i = 0; i < ADHAN_PR.length; i++) if (ADHAN_PR[i][0] === pk) nm = ADHAN_PR[i][1];
     if (early) { showAdhan("بقي " + ar(state.adhan.pre) + " دقائق على أذان " + nm, city, 90000); return; }
-    var busy = (cur.k && !audio.paused) || view === "live";
     showAdhan((test ? "تجربة: " : "حان الآن موعد أذان ") + nm, city, 150000);
-    if ((test || state.adhan.pr[pk]) && !busy) playAdhanSound(pk, function () { $("adhanS").textContent = "منع المتصفح تشغيل الصوت. اضغط إيقاف ثم جرّب من الإعدادات."; });
+    if (test || state.adhan.pr[pk]) { lockAdhan((test ? "تجربة: " : "حان الآن موعد أذان ") + nm, city); playAdhanSound(pk, function () { $("adhanS").textContent = "منع المتصفح تشغيل الصوت. اضغط إيقاف ثم جرّب من الإعدادات."; }); }
   }
   function adhanDone() { var m = lsGet("tv-hijri-adhan") || {}; return m; }
   function adhanMark(ds, key) {
