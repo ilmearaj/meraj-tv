@@ -747,6 +747,10 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
       <div class="seg" id="readWith"><button type="button" data-w="1">يظهر ويتحرك مع القارئ</button><button type="button" data-w="0">الصوت فقط</button></div>
       <p class="hint">لما يشتغل دعاء له نص، يفتح النص ويتحرك لفوق بشكل خفيف حسب مكان صوت القارئ.</p>
     </div>
+    <div>
+      <h3>صوت التنقل بين الأزرار</h3>
+      <div class="seg" id="navSnd"><button type="button" data-n="1">يعمل</button><button type="button" data-n="0">صامت</button></div>
+    </div>
     <button class="close" id="close" type="button">تم</button>
   </div>
 </div>
@@ -850,7 +854,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     ["green", "زمردي", "#4fd1a5"], ["blue", "أزرق", "#6ea8ff"], ["maroon", "عنابي", "#e0707f"],
     ["violet", "بنفسجي", "#b69cff"], ["gold", "ذهبي", "#e3b54a"], ["light", "فاتح", "#ffffff"]
   ];
-  var state = { ptune: { Fajr: 0, Sunrise: 0, Dhuhr: 0, Maghrib: 0, Isha: 0, Midnight: 0 }, palette: "green", ui: "f", uiv: 2, locAuto: true, geo: null, offset: 0, auto: { sabah: true, nudba: true, kumayl: false }, morning: 360, night: 1200, rotate: true, voice: {}, start: "home", liveSound: false, readWith: true, loc: { c: "KW", i: 0 }, pmethod: "jafari", adhan: { on: true, voice: 0, pr: { Fajr: false, Dhuhr: true, Maghrib: true, Isha: true }, pre: 0 }, rfont: 2.6, rspeed: 24, homeApps: null, speed: 1, saver: { on: true, after: 300, every: 30 }, bg: { mode: "fixed", every: 60 } };
+  var state = { navSound: true, ptune: { Fajr: 0, Sunrise: 0, Dhuhr: 0, Maghrib: 0, Isha: 0, Midnight: 0 }, palette: "green", ui: "f", uiv: 2, locAuto: true, geo: null, offset: 0, auto: { sabah: true, nudba: true, kumayl: false }, morning: 360, night: 1200, rotate: true, voice: {}, start: "home", liveSound: false, readWith: true, loc: { c: "KW", i: 0 }, pmethod: "jafari", adhan: { on: true, voice: 0, pr: { Fajr: false, Dhuhr: true, Maghrib: true, Isha: true }, pre: 0 }, rfont: 2.6, rspeed: 24, homeApps: null, speed: 1, saver: { on: true, after: 300, every: 30 }, bg: { mode: "fixed", every: 60 } };
   try {
     var saved = JSON.parse(localStorage.getItem("tv-hijri") || "{}");
     if (saved.palette) state.palette = saved.palette;
@@ -862,6 +866,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     if (typeof saved.night === "number") state.night = saved.night;
     if (typeof saved.rotate === "boolean") state.rotate = saved.rotate;
     if (typeof saved.readWith === "boolean") state.readWith = saved.readWith;
+    if (typeof saved.navSound === "boolean") state.navSound = saved.navSound;
     if (saved.loc && typeof saved.loc.c === "string" && typeof saved.loc.i === "number") { state.loc = { c: saved.loc.c, i: saved.loc.i }; state.locAuto = false; }
     if (typeof saved.locAuto === "boolean") state.locAuto = saved.locAuto;
     if (saved.geo && isFinite(saved.geo.lat) && isFinite(saved.geo.lon)) state.geo = { lat: +saved.geo.lat, lon: +saved.geo.lon, city: String(saved.geo.city || "") };
@@ -1106,7 +1111,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
   });
   /* شاشة التخصيص: بطاقات رئيسية، وكل بطاقة تفتح خياراتها فقط */
   var SET_CARDS = [
-    { t: "الشكل والألوان", d: "الأزرار والأيقونات واللون والخلفية", g: [0, 1, 10], s: ["uiSeg", "swatches", "bgMode"] },
+    { t: "الشكل والألوان", d: "الأزرار والأيقونات واللون والخلفية", g: [0, 1, 10, 12], s: ["uiSeg", "swatches", "bgMode"] },
     { t: "الموقع", d: "الطقس ومواقيت الصلاة", g: [3], s: ["locC", "locI"] },
     { t: "ضبط المواقيت والقرّاء", d: "الدقائق والقارئ لكل دعاء", g: [2], s: [] },
     { t: "الأذان والتنبيه", d: "الصوت والصلوات", g: [4], s: ["adOn", "adVoice"] },
@@ -1838,7 +1843,32 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     var i;
     var w = $("readWith").children;
     for (i = 0; i < w.length; i++) w[i].setAttribute("aria-pressed", String((w[i].dataset.w === "1") === state.readWith));
+    var ns = $("navSnd").children;
+    for (i = 0; i < ns.length; i++) ns[i].setAttribute("aria-pressed", String((ns[i].dataset.n === "1") === state.navSound));
   }
+  /* صوت خفيف عند التنقل بالأسهم (مثل واجهة التلفزيون) */
+  var navAC = null, navKeyAt = 0, navLast = 0;
+  $("navSnd").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    state.navSound = b.dataset.n === "1"; save(); syncViewSettings(); if (state.navSound) navTick();
+  });
+  function navTick() {
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+      if (!navAC) navAC = new AC();
+      if (navAC.state === "suspended") navAC.resume();
+      var t = navAC.currentTime, o = navAC.createOscillator(), g = navAC.createGain();
+      o.type = "sine"; o.frequency.setValueAtTime(1180, t); o.frequency.exponentialRampToValueAtTime(820, t + .06);
+      g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.09, t + .008); g.gain.exponentialRampToValueAtTime(.0001, t + .09);
+      o.connect(g); g.connect(navAC.destination); o.start(t); o.stop(t + .1);
+    } catch (err) {}
+  }
+  document.addEventListener("keydown", function (e) { if (/^Arrow(Up|Down|Left|Right)$/.test(e.key) || e.key === "Tab") navKeyAt = Date.now(); }, true);
+  document.addEventListener("focusin", function (e) {
+    if (!state.navSound || Date.now() - navKeyAt > 300) return;
+    var n = Date.now(); if (n - navLast < 45) return; navLast = n;
+    if (e.target && e.target.matches && e.target.matches("button, a[href], [tabindex]")) navTick();
+  });
 
   /* قارئ النصوص: ملف texts/المعرّف.txt لكل دعاء، والفقرات يفصلها سطر فارغ */
   var TEXTS = {};
