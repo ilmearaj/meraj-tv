@@ -557,12 +557,24 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
 .sec[data-g="2"] #tune, .sec[data-g="2"] #reciters, .sec[data-g="2"] #occPrev { break-inside: avoid; }
 .sec[data-g="2"] h3 { break-after: avoid; }
 
-/* تكبير العنصر المحدد وتصغير الباقي قليلاً (سائل) */
-:root[data-ui="f"] .homeapps .happ, :root[data-ui="f"] .events .tile { transition: transform .35s cubic-bezier(.2,.8,.2,1), opacity .35s, box-shadow .3s, border-color .3s; }
-:root[data-ui="f"] .homeapps:has(.happ:focus-visible) .happ:not(:focus-visible),
-:root[data-ui="f"] .events:has(.tile:focus-visible) .tile:not(:focus-visible) { transform: scale(.9); opacity: .62; }
-:root[data-ui="f"] .happ:focus-visible { transform: scale(1.18); }
-:root[data-ui="f"] .events .tile:focus-visible { transform: scale(1.07); z-index: 2; }
+/* بدون تكبير عند التحديد (أخف على التلفزيون): حلقة التحديد فقط */
+:root[data-ui="f"] :focus-visible, :root[data-ui="f"] .scard:focus-visible { transform: none !important; }
+
+/* صفحة الصوت والنص بالشكل السائل */
+:root[data-ui="f"] .reader { background: radial-gradient(60% 55% at 12% -5%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 70%), radial-gradient(55% 60% at 100% 5%, color-mix(in srgb, var(--accent2) 22%, transparent), transparent 70%), radial-gradient(65% 60% at 0% 105%, var(--glow2), transparent 72%), radial-gradient(50% 50% at 92% 100%, var(--glow1), transparent 72%), linear-gradient(180deg, var(--bg), var(--bg2)); }
+:root[data-ui="f"] .r-art { display: none; }
+:root[data-ui="f"] .r-title { font-size: 2.6rem; text-shadow: none; color: var(--accent2); }
+:root[data-ui="f"] .r-body { background: linear-gradient(135deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .04)); border: 1.5px solid rgba(255, 255, 255, .3); border-radius: 2.6rem; padding: 1.8rem 3rem; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35); }
+:root[data-ui="f"] .r-text p { line-height: 2.15; }
+:root[data-ui="f"] .player { background: linear-gradient(135deg, rgba(255, 255, 255, .18), rgba(255, 255, 255, .07)); border: 1.5px solid rgba(255, 255, 255, .38); border-radius: 2.8rem; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 1.4rem 3.4rem rgba(0, 0, 0, .45); backdrop-filter: blur(30px) saturate(1.5); -webkit-backdrop-filter: blur(30px) saturate(1.5); }
+:root[data-ui="f"] .p-art { border-radius: 1.8rem; border: 1.5px solid rgba(255, 255, 255, .45); }
+:root[data-ui="f"] .p-title { color: var(--accent2); }
+:root[data-ui="f"] .p-bar { background: rgba(255, 255, 255, .2); height: 8px; border-radius: 99px; }
+:root[data-ui="f"] .p-bar i { background: linear-gradient(to left, var(--accent), var(--accent2)); }
+:root[data-ui="f"] .r-ctl .btn[aria-pressed="true"], :root[data-ui="f"] .btn[aria-pressed="true"] { background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 80%, #fff), color-mix(in srgb, var(--accent2) 70%, transparent)); color: var(--accent-ink); border-color: rgba(255, 255, 255, .7); }
+:root[data-ui="f"] .vchip { border-radius: 99px; background: rgba(255, 255, 255, .14); border: 1px solid rgba(255, 255, 255, .4); }
+:root[data-ui="f"] .vchip:focus-visible { background: rgba(255, 255, 255, .88); color: #10231a; outline: none; }
+body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
 </style>
 </head>
 <body>
@@ -1610,7 +1622,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     $("pCur").textContent = fmtT(audio.currentTime);
     if (rd.k && rd.k === cur.k && audio.duration) {
       var b = $("rBody");
-      rd.target = r * Math.max(0, b.scrollHeight - b.clientHeight);
+      rd.target = anchorTarget(audio.currentTime, r);
       if (rd.sync) syncKick();
     }
   });
@@ -1650,6 +1662,29 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
 
   /* الأقسام: الرئيسية، البث المباشر، الأدعية والزيارات */
   var view = "home";
+  /* ضبط تلقائي: إذا كان المحتوى أطول من الشاشة (حسب خطوط وشاشة التلفزيون) يصغّر القياس ليدخل كامل */
+  var fitBusy = false;
+  function fitPage() {
+    if (fitBusy) return; fitBusy = true;
+    var root = document.documentElement;
+    root.style.fontSize = "";
+    var base = parseFloat(getComputedStyle(root).fontSize) || 16;
+    if (view === "home" && panel.hidden) {
+      for (var i = 0; i < 4; i++) {
+        var h = window.innerHeight, fs = parseFloat(getComputedStyle(root).fontSize), ha = $("homeApps");
+        var sh = Math.max(root.scrollHeight, ha ? ha.getBoundingClientRect().bottom + window.scrollY + fs * 2.4 : 0);
+        if (sh <= h + 1) break;
+        root.style.fontSize = Math.max(5, fs * (h / sh) * 0.985).toFixed(2) + "px";
+      }
+    }
+    fitBusy = false;
+  }
+  var fitT = 0;
+  function fitSoon() { clearTimeout(fitT); fitT = setTimeout(fitPage, 120); }
+  window.addEventListener("resize", fitSoon);
+  window.addEventListener("load", function () { fitSoon(); setTimeout(fitPage, 1500); setTimeout(fitPage, 4000); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitSoon);
+  setInterval(fitPage, 20000);
   function showView(v) {
     view = v;
     document.body.classList.toggle("off-home", v !== "home");
@@ -1659,6 +1694,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     if (v === "lib") { Object.keys(DUAS).forEach(probe); renderLib(); }
     if (v === "apps") renderApps();
     window.scrollTo(0, 0);
+    fitSoon();
   }
   $("tabs").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) showView(b.dataset.v); });
 
@@ -1890,6 +1926,26 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
   }
   function syncKick() { if (!rd.raf) rd.raf = requestAnimationFrame(syncStep); }
   rd.target = 0;
+  /* نقاط ارتكاز: وقت بداية كل فقرة لكل ملف صوت (texts/sync.json)، مولّدة من فواصل الصوت */
+  var SYNC = null, syncTried = false;
+  function loadSync() {
+    if (syncTried) return; syncTried = true;
+    fetch("texts/sync.json").then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (j) { SYNC = j; }).catch(function () { SYNC = null; });
+  }
+  loadSync();
+  function anchorTarget(t, r) {
+    var b = $("rBody"), max = Math.max(0, b.scrollHeight - b.clientHeight), f = null;
+    try { f = DUAS[cur.k].voices[cur.i].f.replace(/^.*\//, "").replace(/\.mp3$/, ""); } catch (e) {}
+    var a = SYNC && f && SYNC[f], ps = $("rText").children;
+    if (!a || !ps.length || ps.length !== a.s.length) return r * max;
+    var s = a.s, j = 0;
+    while (j + 1 < s.length && t >= s[j + 1]) j++;
+    var end = j + 1 < s.length ? s[j + 1] : Math.max(a.e, s[j] + 1);
+    var fr = Math.min(1, Math.max(0, (t - s[j]) / Math.max(0.5, end - s[j])));
+    var bt = b.getBoundingClientRect().top, p = ps[j], pr = p.getBoundingClientRect();
+    var y = pr.top - bt + b.scrollTop + fr * pr.height;
+    return Math.min(max, Math.max(0, y - b.clientHeight * 0.3));
+  }
   function loadText(k, cb) {
     if (TEXTS[k]) { cb(TEXTS[k]); return; }
     fetch("texts/" + k + ".txt").then(function (r) { if (!r.ok) throw 0; return r.text(); }).then(function (t) {
