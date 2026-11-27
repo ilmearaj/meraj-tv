@@ -148,6 +148,19 @@ public class MainActivity extends Activity {
         web.evaluateJavascript("window.__tvBack && window.__tvBack();", null);
     }
 
+    /** زر PS بيد البلايستيشن (BUTTON_MODE) أو Home يوصلنا كمفتاح: نرجع لأول الصفحة. */
+    @Override
+    public boolean dispatchKeyEvent(android.view.KeyEvent event) {
+        int k = event.getKeyCode();
+        if (k == android.view.KeyEvent.KEYCODE_BUTTON_MODE || k == android.view.KeyEvent.KEYCODE_HOME) {
+            if (event.getAction() == android.view.KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
+                web.evaluateJavascript("window.__tvHome && window.__tvHome();", null);
+            }
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
     /** زر القائمة/الإعدادات بالريموت يفتح إعدادات الصفحة. */
     @Override
     public boolean onKeyDown(int keyCode, android.view.KeyEvent event) {
