@@ -2389,7 +2389,11 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
     $("adhanT").textContent = title; $("adhanS").textContent = sub;
     $("adhanBar").hidden = false;
     clearTimeout(adhanTimer);
-    adhanTimer = setTimeout(hideAdhan, ms);
+    /* لا يقطع الأذان وهو يشتغل: إذا انتهى الوقت والصوت ما زال شغالاً ينتظر لين يخلص */
+    adhanTimer = setTimeout(function chk() {
+      if (!adhanAudio.paused && !adhanAudio.ended && adhanAudio.currentTime > 0) { adhanTimer = setTimeout(chk, 5000); return; }
+      hideAdhan();
+    }, ms);
   }
   function playAdhanSound(pk, onFail) {
     var files = adhanFiles(pk);
