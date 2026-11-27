@@ -362,7 +362,19 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
 .happ i.ico img { width: 100%; height: 100%; display: block; object-fit: cover; }
 .happ span.en { font-family: "Inter", "Helvetica Neue", Arial, sans-serif; letter-spacing: .01em; direction: ltr; }
 
-.saver { position: fixed; inset: 0; z-index: 100; background: #02080a; overflow: hidden; }
+.saver { position: fixed; inset: 0; z-index: 100; overflow: hidden; background: radial-gradient(60% 55% at 12% -5%, color-mix(in srgb, var(--accent) 26%, transparent), transparent 70%), radial-gradient(55% 60% at 100% 5%, color-mix(in srgb, var(--accent2) 20%, transparent), transparent 70%), radial-gradient(65% 60% at 0% 105%, var(--glow2), transparent 72%), radial-gradient(50% 50% at 92% 100%, var(--glow1), transparent 72%), linear-gradient(180deg, var(--bg), var(--bg2)); }
+.sv-w { position: absolute; border-radius: 50%; filter: blur(5.5rem); opacity: .55; will-change: transform; }
+.sv-w.w1 { width: 62vw; height: 62vw; left: -14vw; top: -22vw; background: radial-gradient(circle, var(--accent), transparent 68%); animation: svw1 26s ease-in-out infinite alternate; }
+.sv-w.w2 { width: 54vw; height: 54vw; right: -12vw; top: 8vh; background: radial-gradient(circle, var(--accent2), transparent 68%); animation: svw2 31s ease-in-out infinite alternate; }
+.sv-w.w3 { width: 58vw; height: 58vw; left: 18vw; bottom: -30vw; background: radial-gradient(circle, var(--glow1), transparent 68%); opacity: .8; animation: svw3 23s ease-in-out infinite alternate; }
+@keyframes svw1 { from { transform: translate(0, 0) scale(1); } 50% { transform: translate(16vw, 10vh) scale(1.18); } to { transform: translate(6vw, 22vh) scale(.92); } }
+@keyframes svw2 { from { transform: translate(0, 0) scale(1.05); } 50% { transform: translate(-18vw, 14vh) scale(.9); } to { transform: translate(-6vw, -6vh) scale(1.2); } }
+@keyframes svw3 { from { transform: translate(0, 0) scale(1); } 50% { transform: translate(-14vw, -12vh) scale(1.15); } to { transform: translate(12vw, -4vh) scale(.95); } }
+.sv-ripple { position: absolute; inset: -20%; opacity: .3; background: repeating-radial-gradient(circle at 30% 40%, transparent 0 7rem, rgba(255, 255, 255, .045) 7.2rem 7.6rem, transparent 7.8rem 14rem); animation: svrip 40s linear infinite; }
+@keyframes svrip { from { transform: scale(1) rotate(0); } to { transform: scale(1.35) rotate(8deg); } }
+.saver .sv-info { padding: 2rem 3.2rem 2.4rem; border-radius: 3rem; background: linear-gradient(135deg, rgba(255, 255, 255, .17), rgba(255, 255, 255, .05)); border: 1.5px solid rgba(255, 255, 255, .34); backdrop-filter: blur(34px) saturate(1.5); -webkit-backdrop-filter: blur(34px) saturate(1.5); box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, .55), 0 1.6rem 4rem rgba(0, 0, 0, .3); text-shadow: none; }
+.saver .sv-l { display: none; }
+.saver .sv-txt { display: block !important; }
 .saver[hidden] { display: none; }
 .sv-l { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transition: opacity 2.2s ease; }
 .sv-l.on { opacity: 1; animation: svzoom 40s ease-in-out infinite alternate; }
@@ -616,7 +628,7 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
 </style>
 </head>
 <body>
-<div class="saver" id="saver" hidden aria-hidden="true"><div class="sv-l" id="svA"></div><div class="sv-l" id="svB"></div><div class="sv-info" id="svInfo"><div class="sv-time" id="svTime"></div><div class="sv-date" id="svDate"></div><div class="sv-txt" id="svTxt"></div></div></div>
+<div class="saver" id="saver" hidden aria-hidden="true"><div class="sv-w w1"></div><div class="sv-w w2"></div><div class="sv-w w3"></div><div class="sv-ripple"></div><div class="sv-l" id="svA"></div><div class="sv-l" id="svB"></div><div class="sv-info" id="svInfo"><div class="sv-time" id="svTime"></div><div class="sv-date" id="svDate"></div><div class="sv-txt" id="svTxt"></div></div></div>
 <div class="ambient" id="ambient" aria-hidden="true"><div class="amb-medal" id="ambMedal"></div><div class="amb-photo" id="ambPhoto"></div></div>
 <div class="adhan-lock" id="adhanLock" hidden role="alertdialog" aria-live="assertive"><video id="adhanVid" playsinline preload="auto"></video><div class="al-card"><i class="al-ic">🕌</i><b id="alT"></b><span id="alS"></span><div class="al-dots" id="alDots" aria-hidden="true"></div><p>لإغلاق الأذان واستكمال التلفزيون اضغط زر الرجوع ٣ مرات</p></div></div>
 <div class="adhan-bar" id="adhanBar" hidden role="status" aria-live="assertive"><div class="adhan-txt"><b id="adhanT"></b><span id="adhanS"></span></div><button type="button" class="btn" id="adhanStop">إيقاف</button></div>
