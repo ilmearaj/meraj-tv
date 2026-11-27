@@ -671,6 +671,13 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
 :root[data-ui="g"] .btn { border-radius: 99px; background: rgba(255,255,255,.12); color: var(--fg); border: 1px solid rgba(255,255,255,.35); }
 :root[data-ui="g"] .btn:focus-visible { background: #EFE9FA; color: #1A1330; outline: none; }
 :root[data-ui="g"] .badge { background: #F4C86A; color: #2b1d02; }
+
+:root[data-ui="g"] .events::before { display: none; }
+:root[data-ui="g"] .events .picks, :root[data-ui="g"] .homeapps .picks { display: none !important; }
+:root[data-ui="g"] .duas { display: grid !important; grid-column: 1 / -1; grid-row: 4; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.2rem; margin-top: .4rem; }
+:root[data-ui="g"] .duas::before { content: "الأدعية والزيارات"; grid-column: 1 / -1; font-family: var(--font-display); font-size: 1.9rem; color: var(--fg); padding: 0 .4rem; }
+:root[data-ui="g"] .duas .tile { height: 13rem; min-height: 13rem; border-radius: 2rem; border: 1.5px solid rgba(255,255,255,.3); }
+:root[data-ui="g"] .homeapps { grid-row: 5; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
 </style>
 </head>
 <body>
@@ -693,7 +700,6 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
       <div class="greg" id="greg"></div>
       <div class="adjusted" id="adjusted" hidden></div>
     </div>
-    <div class="duas" id="duas" aria-label="الأدعية الصوتية"></div>
   </section>
 
   <section class="dhikr" id="dhikr" aria-live="off">
@@ -719,6 +725,7 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
     <div class="prayers" id="prayers" aria-label="مواقيت الصلاة"></div>
   </section>
 
+  <div class="duas" id="duas" aria-label="الأدعية الصوتية"></div>
   <section class="homeapps" id="homeApps" aria-label="التطبيقات"></section>
 
 
