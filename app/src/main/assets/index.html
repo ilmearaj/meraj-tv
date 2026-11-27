@@ -484,11 +484,49 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
 :root[data-ui="e"] .pr { border-radius: 1.6rem 1.6rem .4rem .4rem; }
 :root[data-ui="e"] .events, :root[data-ui="e"] .dhikr { border-radius: 2.4rem 2.4rem 1rem 1rem; }
 :root[data-ui="e"] .tile:focus-visible, :root[data-ui="e"] .happ:focus-visible { box-shadow: 0 0 0 4px var(--accent), 0 1rem 2.4rem rgba(0, 0, 0, .5); }
+
+/* شكل الواجهة (و): سائل — زجاج سائل بألوان متداخلة فوق الخلفية الخضراء */
+:root[data-ui="f"] body { background: radial-gradient(60% 55% at 12% -5%, color-mix(in srgb, var(--accent) 26%, transparent), transparent 70%), radial-gradient(55% 60% at 100% 5%, color-mix(in srgb, var(--accent2) 20%, transparent), transparent 70%), radial-gradient(65% 60% at 0% 105%, var(--glow2), transparent 72%), radial-gradient(50% 50% at 92% 100%, var(--glow1), transparent 72%), linear-gradient(180deg, var(--bg), var(--bg2)); background-attachment: fixed; }
+:root[data-ui="f"] .events > .next, :root[data-ui="f"] .events .pr, :root[data-ui="f"] .dhikr, :root[data-ui="f"] .events .prayers, :root[data-ui="f"] .gear, :root[data-ui="f"] .wx, :root[data-ui="f"] .hedit, :root[data-ui="f"] .sysbtn { background: linear-gradient(135deg, rgba(255, 255, 255, .17), rgba(255, 255, 255, .05)); border: 1.5px solid rgba(255, 255, 255, .34); backdrop-filter: blur(34px) saturate(1.5); -webkit-backdrop-filter: blur(34px) saturate(1.5); box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, .55), inset 0 -1px 0 rgba(255, 255, 255, .1), 0 1rem 2.6rem rgba(0, 0, 0, .25); }
+:root[data-ui="f"] .dhikr { border-radius: 2.4rem; }
+:root[data-ui="f"] .events { grid-template-columns: minmax(0, 1.1fr) minmax(0, .85fr) minmax(0, 1.35fr) !important; grid-template-rows: auto auto; gap: 1.1rem; background: none; border: 0; padding: 0; border-radius: 0; backdrop-filter: none; box-shadow: none; }
+:root[data-ui="f"] .events::before { display: none; }
+:root[data-ui="f"] .events .pin, :root[data-ui="f"] .events .picks, :root[data-ui="f"] .events > .next { grid-row: 1 !important; min-height: 13rem; }
+:root[data-ui="f"] .events .pin { grid-column: 1; }
+:root[data-ui="f"] .events .picks { grid-column: 2; }
+:root[data-ui="f"] .events > .next { grid-column: 3 !important; border-radius: 3rem; padding: .9rem 1.8rem; align-content: start; gap: .5rem 1.4rem; background: linear-gradient(135deg, color-mix(in srgb, var(--accent2) 36%, rgba(255, 255, 255, .05)), color-mix(in srgb, var(--accent2) 9%, rgba(255, 255, 255, .03))); }
+:root[data-ui="f"] .events > .next .next-name { font-size: 1.7rem !important; }
+:root[data-ui="f"] .events .countdown { width: 6rem; height: 6rem; }
+:root[data-ui="f"] .events .ring-n b { font-size: 2rem; }
+:root[data-ui="f"] .next .list { display: flex !important; grid-column: 1 / -1; padding: 0; margin: .2rem 0 0; border-top: 1px solid rgba(255, 255, 255, .25); }
+:root[data-ui="f"] .next .list li { grid-template-columns: .8rem 5.4rem minmax(0, 1fr) auto; gap: .7rem; padding: .25rem .1rem; border-bottom: 0; font-size: 1.05rem; }
+:root[data-ui="f"] .next .list li .kind { background: rgba(255, 255, 255, .2); border-radius: 99px; padding: .05rem .7rem; font-size: .95rem; }
+:root[data-ui="f"] .events .tile { border-radius: 2.6rem; border: 1.5px solid rgba(255, 255, 255, .5); }
+:root[data-ui="f"] .events .picks .tile { border-radius: 2.2rem; }
+:root[data-ui="f"] .events .prayers { grid-column: 1 / -1 !important; grid-row: 2 !important; grid-template-columns: repeat(6, minmax(0, 1fr)) !important; grid-template-rows: auto !important; border-radius: 2.8rem; padding: .6rem; gap: .5rem; }
+:root[data-ui="f"] .events .prayers .pr-h { display: none !important; }
+:root[data-ui="f"] .events .prayers .pr-msg { grid-column: 1 / -1; text-align: center; }
+:root[data-ui="f"] .events .pr { border-radius: 2.1rem; padding: .3rem .2rem !important; background: none; border-color: transparent; box-shadow: none; backdrop-filter: none; }
+:root[data-ui="f"] .events .pr b { font-size: 1.6rem !important; }
+:root[data-ui="f"] .events .pr span { font-size: 1.1rem; }
+:root[data-ui="f"] .events .prayers .pr.next { grid-column: auto !important; grid-row: auto !important; min-height: 0; margin: 0; }
+:root[data-ui="f"] .events .pr.next { background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 60%, transparent), color-mix(in srgb, var(--accent2) 42%, transparent)); border: 1.5px solid rgba(255, 255, 255, .85); box-shadow: 0 0 2.2rem color-mix(in srgb, var(--accent) 55%, transparent); }
+:root[data-ui="f"] .events .pr.next span, :root[data-ui="f"] .events .pr.next i { color: #fff; }
+:root[data-ui="f"] .homeapps { align-items: center; gap: 1.4rem; }
+:root[data-ui="f"] .homeapps .happ { flex-direction: column; gap: .7rem; min-height: 9rem; border-radius: 3.2rem; border: 1.5px solid color-mix(in srgb, var(--c) 40%, rgba(255, 255, 255, .5)); background: linear-gradient(135deg, color-mix(in srgb, var(--c) 52%, rgba(255, 255, 255, .06)), color-mix(in srgb, var(--c) 16%, rgba(255, 255, 255, .04))); backdrop-filter: blur(34px) saturate(1.5); -webkit-backdrop-filter: blur(34px) saturate(1.5); box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, .5), 0 1rem 2.4rem rgba(0, 0, 0, .28); font-size: 1.7rem; }
+:root[data-ui="f"] .happ i { width: 4.2rem; height: 4.2rem; border-radius: 1.5rem; background: linear-gradient(135deg, rgba(255, 255, 255, .55), color-mix(in srgb, var(--c, #e8c36a) 90%, transparent)); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .55), 0 .3rem 1rem rgba(0, 0, 0, .3); font-size: 2.4rem; }
+:root[data-ui="f"] .happ i.ico { background: none; width: 4.2rem; height: 4.2rem; }
+:root[data-ui="f"] .app { gap: .8rem; }
+:root[data-ui="f"] .now { min-height: 8.4rem; padding-top: .2rem; }
+:root[data-ui="f"] .homeapps::before { padding-top: 0; }
+:root[data-ui="f"] .happ:focus-visible { transform: scale(1.1); z-index: 2; border-color: #fff; box-shadow: 0 0 0 3px #fff, 0 0 3.2rem color-mix(in srgb, var(--c, #e8c36a) 70%, transparent), 0 1.6rem 3.4rem rgba(0, 0, 0, .5); }
+:root[data-ui="f"] .tile:focus-visible { box-shadow: 0 0 0 4px #fff, 0 1.2rem 3rem rgba(0, 0, 0, .5); }
+:root[data-ui="f"] .btn { border-radius: 99px; background: rgba(255, 255, 255, .16); color: var(--fg); border: 1px solid rgba(255, 255, 255, .45); backdrop-filter: blur(8px); }
+:root[data-ui="f"] .btn:focus-visible { background: rgba(255, 255, 255, .88); color: #10231a; outline: none; }
+:root[data-ui="f"] .badge { background: rgba(255, 255, 255, .9); color: #10231a; }
 </style>
 </head>
 <body>
-
-
 <div class="saver" id="saver" hidden aria-hidden="true"><div class="sv-l" id="svA"></div><div class="sv-l" id="svB"></div><div class="sv-info" id="svInfo"><div class="sv-time" id="svTime"></div><div class="sv-date" id="svDate"></div><div class="sv-txt" id="svTxt"></div></div></div>
 <div class="ambient" id="ambient" aria-hidden="true"><div class="amb-medal" id="ambMedal"></div><div class="amb-photo" id="ambPhoto"></div></div>
 <div class="adhan-bar" id="adhanBar" hidden role="status" aria-live="assertive"><div class="adhan-txt"><b id="adhanT"></b><span id="adhanS"></span></div><button type="button" class="btn" id="adhanStop">إيقاف</button></div>
@@ -594,7 +632,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     <h2 id="panelTitle">تخصيص الشاشة</h2>
     <div>
       <h3>شكل الأزرار والأيقونات</h3>
-      <div class="seg" id="uiSeg"><button type="button" data-u="">١ الحالي (دائري)</button><button type="button" data-u="b">٢ زخرفي ذهبي</button><button type="button" data-u="c">٣ زجاجي</button><button type="button" data-u="d">٤ مسطّح جريء</button><button type="button" data-u="e">٥ محراب</button></div>
+      <div class="seg" id="uiSeg"><button type="button" data-u="">١ الحالي (دائري)</button><button type="button" data-u="b">٢ زخرفي ذهبي</button><button type="button" data-u="c">٣ زجاجي</button><button type="button" data-u="d">٤ مسطّح جريء</button><button type="button" data-u="e">٥ محراب</button><button type="button" data-u="f">٦ سائل</button></div>
     </div>
     <div>
       <h3>اللون</h3>
@@ -773,11 +811,11 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     ["green", "زمردي", "#4fd1a5"], ["blue", "أزرق", "#6ea8ff"], ["maroon", "عنابي", "#e0707f"],
     ["violet", "بنفسجي", "#b69cff"], ["gold", "ذهبي", "#e3b54a"], ["light", "فاتح", "#ffffff"]
   ];
-  var state = { ptune: { Fajr: 0, Sunrise: 0, Dhuhr: 0, Maghrib: 0, Isha: 0, Midnight: 0 }, palette: "green", ui: "c", offset: 0, auto: { sabah: true, nudba: true, kumayl: false }, morning: 360, night: 1200, rotate: true, voice: {}, start: "home", liveSound: false, readWith: true, loc: { c: "KW", i: 0 }, pmethod: "jafari", adhan: { on: true, voice: 0, pr: { Fajr: false, Dhuhr: true, Maghrib: true, Isha: true }, pre: 0 }, rfont: 2.6, rspeed: 24, homeApps: null, speed: 1, saver: { on: true, after: 300, every: 30 }, bg: { mode: "fixed", every: 60 } };
+  var state = { ptune: { Fajr: 0, Sunrise: 0, Dhuhr: 0, Maghrib: 0, Isha: 0, Midnight: 0 }, palette: "green", ui: "f", uiv: 2, offset: 0, auto: { sabah: true, nudba: true, kumayl: false }, morning: 360, night: 1200, rotate: true, voice: {}, start: "home", liveSound: false, readWith: true, loc: { c: "KW", i: 0 }, pmethod: "jafari", adhan: { on: true, voice: 0, pr: { Fajr: false, Dhuhr: true, Maghrib: true, Isha: true }, pre: 0 }, rfont: 2.6, rspeed: 24, homeApps: null, speed: 1, saver: { on: true, after: 300, every: 30 }, bg: { mode: "fixed", every: 60 } };
   try {
     var saved = JSON.parse(localStorage.getItem("tv-hijri") || "{}");
     if (saved.palette) state.palette = saved.palette;
-    if (typeof saved.ui === "string" && /^[bcde]?$/.test(saved.ui)) state.ui = saved.ui;
+    if (saved.uiv === 2 && typeof saved.ui === "string" && /^[bcdef]?$/.test(saved.ui)) state.ui = saved.ui;
     if (saved.ptune) for (var tk in state.ptune) if (typeof saved.ptune[tk] === "number" && Math.abs(saved.ptune[tk]) <= 30) state.ptune[tk] = Math.round(saved.ptune[tk]);
     if (typeof saved.offset === "number") state.offset = saved.offset;
     if (saved.auto) for (var ak in state.auto) if (typeof saved.auto[ak] === "boolean") state.auto[ak] = saved.auto[ak];
@@ -1632,6 +1670,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     else if (focusKey) f = host.querySelector("[data-hp=\"" + focusKey + "\"]");
     if (f) f.focus();
   }
+  (function () { var n = $("next"), l = $("list"); if (n && l && l.parentNode !== n) n.appendChild(l); })();
   renderHome();
   $("homeApps").addEventListener("click", function (e) {
     if (e.target.closest("#editApps")) { editing = !editing; renderHome("edit"); return; }
