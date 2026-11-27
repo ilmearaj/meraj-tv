@@ -539,6 +539,23 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
 :root[data-ui="f"] .close { background: rgba(255, 255, 255, .9); color: #10231a; border-radius: 99px; padding: .8rem 2.6rem; }
 :root[data-ui="f"] .rc { border-bottom-color: rgba(255, 255, 255, .14); }
 :root[data-ui="f"] .hint { color: rgba(255, 255, 255, .6); }
+
+/* شاشة التخصيص المضغوطة */
+.sheet[data-page="home"] > .sec, .sheet:not([data-page="home"]) > #setHome, .sheet[data-page="sub"] > .sec:not(.on) { display: none; }
+#setHome { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.scard { display: grid; gap: .35rem; align-content: start; text-align: right; min-height: 9rem; padding: 1.1rem 1.3rem; border-radius: 1.6rem; border: 1.5px solid rgba(255,255,255,.28); background: linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.05)); color: inherit; font-family: inherit; cursor: pointer; }
+.scard b { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; color: var(--accent2); }
+.scard .sd { font-size: 1rem; opacity: .7; }
+.scard em { font-style: normal; font-size: 1.1rem; margin-top: .3rem; color: var(--accent); }
+.scard:focus-visible { outline: none; transform: scale(1.05); border-color: #fff; box-shadow: 0 0 0 3px #fff, 0 .8rem 2rem rgba(0,0,0,.4); }
+.sheet[data-page="sub"] { grid-template-columns: 1fr 1fr; align-items: start; }
+.sheet[data-page="sub"].one { grid-template-columns: 1fr; }
+.sheet[data-page="sub"] > h2, .sheet[data-page="sub"] > .close { grid-column: 1 / -1; }
+:root[data-ui="f"] .sheet { width: min(92rem, 100%); }
+:root[data-ui="f"] .sheet > #setHome { background: none; border: 0; padding: 0; border-radius: 0; }
+.sec[data-g="2"].on { display: block; column-count: 2; column-gap: 2.4rem; }
+.sec[data-g="2"] #tune, .sec[data-g="2"] #reciters, .sec[data-g="2"] #occPrev { break-inside: avoid; }
+.sec[data-g="2"] h3 { break-after: avoid; }
 </style>
 </head>
 <body>
@@ -1080,12 +1097,62 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
     state.ptune[k] = Math.max(-30, Math.min(30, v)); save(); retune(); buildTune();
     var nb = $("tune").querySelector("[data-k=\"" + k + "\"] [data-d=\"" + b.dataset.d + "\"]"); if (nb) nb.focus();
   });
-  function openPanel() { buildTune(); buildReciters(); panel.hidden = false; markOffsets(); applyPalette(); applyUI(); var f = panel.querySelector(".sw"); if (f) f.focus(); }
-  function closePanel() { panel.hidden = true; $("gear").focus(); }
+  /* شاشة التخصيص: بطاقات رئيسية، وكل بطاقة تفتح خياراتها فقط */
+  var SET_CARDS = [
+    { t: "الشكل والألوان", d: "الأزرار والأيقونات واللون والخلفية", g: [0, 1, 10], s: ["uiSeg", "swatches", "bgMode"] },
+    { t: "الموقع", d: "الطقس ومواقيت الصلاة", g: [3], s: ["locC", "locI"] },
+    { t: "ضبط المواقيت والقرّاء", d: "الدقائق والقارئ لكل دعاء", g: [2], s: [] },
+    { t: "الأذان والتنبيه", d: "الصوت والصلوات", g: [4], s: ["adOn", "adVoice"] },
+    { t: "الأدعية التلقائية", d: "الصباح والندبة وكميل", g: [6, 7, 8, 11], s: [], auto: true },
+    { t: "التاريخ الهجري", d: "تقديم أو تأخير اليوم", g: [5], s: ["offsets"] },
+    { t: "شاشة التوقف", d: "عند عدم الاستعمال", g: [9], s: ["svOn", "svAfter"] }
+  ];
+  var setPage = "home", setOpener = null;
+  (function buildSetHome() {
+    var sheet = panel.querySelector(".sheet"), kids = [], i;
+    for (i = 0; i < sheet.children.length; i++) if (sheet.children[i].tagName === "DIV") kids.push(sheet.children[i]);
+    var home = document.createElement("div"); home.id = "setHome";
+    SET_CARDS.forEach(function (c, n) {
+      c.g.forEach(function (gi) { kids[gi].classList.add("sec"); kids[gi].dataset.g = n; });
+      var b = document.createElement("button"); b.type = "button"; b.className = "scard"; b.dataset.n = n;
+      b.innerHTML = "<b>" + c.t + "</b><span class=\"sd\">" + c.d + "</span><em></em>";
+      home.appendChild(b);
+    });
+    sheet.insertBefore(home, sheet.querySelector(".sec"));
+    sheet.dataset.page = "home";
+    home.addEventListener("click", function (e) { var b = e.target.closest(".scard"); if (b) setGo(+b.dataset.n, b); });
+  })();
+  function cardSummary(c) {
+    if (c.auto) { var k = $("autos").querySelectorAll("[aria-pressed=true]").length; return ar(k) + " مفعّلة"; }
+    var out = [];
+    c.s.forEach(function (id) {
+      var b = $(id).querySelector("[aria-pressed=true]");
+      if (b) out.push((b.childNodes[0] ? b.childNodes[0].textContent : b.textContent).replace(/^[٠-٩0-9]+\s*/, "").trim());
+    });
+    return out.join(" · ");
+  }
+  function refreshSetCards() {
+    var cs = $("setHome").children;
+    for (var i = 0; i < cs.length; i++) cs[i].querySelector("em").textContent = cardSummary(SET_CARDS[i]);
+  }
+  function setGo(n, opener) {
+    var sheet = panel.querySelector(".sheet"), secs = sheet.querySelectorAll(".sec"), i, cnt = 0;
+    if (n === "home") {
+      setPage = "home"; sheet.dataset.page = "home"; $("panelTitle").textContent = "تخصيص الشاشة"; $("close").textContent = "تم";
+      refreshSetCards();
+      var t = setOpener && $("setHome").children[setOpener]; (t || $("setHome").firstChild).focus(); return;
+    }
+    setPage = n; setOpener = n;
+    for (i = 0; i < secs.length; i++) { var on = +secs[i].dataset.g === n; secs[i].classList.toggle("on", on); if (on) cnt++; }
+    sheet.dataset.page = "sub"; sheet.classList.toggle("one", cnt === 1);
+    $("panelTitle").textContent = SET_CARDS[n].t; $("close").textContent = "رجوع";
+    var f = sheet.querySelector(".sec.on [aria-pressed=true]") || sheet.querySelector(".sec.on button"); if (f) f.focus();
+  }
+  function openPanel() { buildTune(); buildReciters(); panel.hidden = false; markOffsets(); applyPalette(); applyUI(); setOpener = null; setGo("home"); }
+  function closePanel() { if (setPage !== "home") { setGo("home"); return; } panel.hidden = true; $("gear").focus(); }
   $("gear").addEventListener("click", openPanel);
   $("close").addEventListener("click", closePanel);
   panel.addEventListener("click", function (e) { if (e.target === panel) closePanel(); });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !panel.hidden) closePanel(); });
   $("dhikr").addEventListener("click", nextDhikr);
 
   /* الأدعية الصوتية: ملفات الصوت تُوضع في مجلد audio بجانب الصفحة */
