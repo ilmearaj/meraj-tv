@@ -731,6 +731,8 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
       <h3 style="margin-top:1.2rem">صوت المؤذن</h3>
       <div class="seg" id="adVoice"></div>
       <div class="seg" style="margin-top:.8rem"><button type="button" id="adTest">تجربة الصوت المختار</button></div>
+      <h3 style="margin-top:1.2rem">مستوى صوت الأذان</h3>
+      <div class="seg" id="adVol"><button type="button" data-l="20">هادئ جداً</button><button type="button" data-l="35">خفيف</button><button type="button" data-l="60">متوسط</button><button type="button" data-l="100">عالي</button></div>
       <h3 style="margin-top:1.2rem">تنبيه قبل الوقت (بدون صوت)</h3>
       <div class="seg" id="adPre"></div>
       <p class="hint">عند دخول الوقت يظهر شريط في أعلى الشاشة، ويرتفع الأذان بصوت المؤذن المختار. ضع ملفاتك في مجلد audio باسم adhan-1.mp3 وadhan-2.mp3 وadhan-3.mp3، وللفجر اختيارياً adhan-fajr-1.mp3 وغيره. لو لم تضف ملفاً يصدر تنبيه قصير بدل الأذان. إذا كان دعاء أو بث مباشر شغالاً يظهر الشريط بدون صوت. الفجر بدون صوت افتراضياً.</p>
@@ -884,7 +886,7 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
     ["green", "زمردي", "#4fd1a5"], ["blue", "أزرق", "#6ea8ff"], ["maroon", "عنابي", "#e0707f"],
     ["violet", "بنفسجي", "#b69cff"], ["gold", "ذهبي", "#e3b54a"], ["light", "فاتح", "#ffffff"]
   ];
-  var state = { navSound: true, ptune: { Fajr: 0, Sunrise: 0, Dhuhr: 0, Maghrib: 0, Isha: 0, Midnight: 0 }, palette: "green", ui: "f", uiv: 2, locAuto: true, geo: null, offset: 0, auto: { sabah: true, nudba: true, kumayl: false }, morning: 360, night: 1200, rotate: true, voice: {}, start: "home", liveSound: false, readWith: true, loc: { c: "KW", i: 0 }, pmethod: "jafari", adhan: { on: true, voice: 0, pr: { Fajr: false, Dhuhr: true, Maghrib: true, Isha: true }, pre: 0 }, rfont: 2.6, rspeed: 24, homeApps: null, speed: 1, saver: { on: true, after: 300, every: 30 }, bg: { mode: "fixed", every: 60 } };
+  var state = { navSound: true, ptune: { Fajr: 0, Sunrise: 0, Dhuhr: 0, Maghrib: 0, Isha: 0, Midnight: 0 }, palette: "green", ui: "f", uiv: 2, locAuto: true, geo: null, offset: 0, auto: { sabah: true, nudba: true, kumayl: false }, morning: 360, night: 1200, rotate: true, voice: {}, start: "home", liveSound: false, readWith: true, loc: { c: "KW", i: 0 }, pmethod: "jafari", adhan: { vol: 35, on: true, voice: 0, pr: { Fajr: false, Dhuhr: true, Maghrib: true, Isha: true }, pre: 0 }, rfont: 2.6, rspeed: 24, homeApps: null, speed: 1, saver: { on: true, after: 300, every: 30 }, bg: { mode: "fixed", every: 60 } };
   try {
     var saved = JSON.parse(localStorage.getItem("tv-hijri") || "{}");
     if (saved.palette) state.palette = saved.palette;
@@ -903,6 +905,7 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
     if (saved.pmethod === "jafari" || saved.pmethod === "official") state.pmethod = saved.pmethod;
     if (saved.adhan) {
       if (typeof saved.adhan.on === "boolean") state.adhan.on = saved.adhan.on;
+      if ([20, 35, 60, 100].indexOf(saved.adhan.vol) >= 0) state.adhan.vol = saved.adhan.vol;
       if (typeof saved.adhan.voice === "number" && saved.adhan.voice >= 0 && saved.adhan.voice < 3) state.adhan.voice = saved.adhan.voice;
       if (typeof saved.adhan.pre === "number" && [0, 10, 15].indexOf(saved.adhan.pre) >= 0) state.adhan.pre = saved.adhan.pre;
       if (saved.adhan.pr) for (var pk in state.adhan.pr) if (typeof saved.adhan.pr[pk] === "boolean") state.adhan.pr[pk] = saved.adhan.pr[pk];
@@ -2402,6 +2405,7 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
       probeFile(files[i], function (ok) {
         if (!ok) { next(i + 1); return; }
         adhanAudio.src = files[i];
+        adhanAudio.volume = (state.adhan.vol || 35) / 100;
         var p = adhanAudio.play();
         if (p && p.catch) p.catch(function () { if (onFail) onFail(); });
       });
@@ -2442,10 +2446,12 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
     $("adPr").addEventListener("click", function (e) { var b = e.target.closest("button"); if (!b) return; state.adhan.pr[b.dataset.p] = !state.adhan.pr[b.dataset.p]; save(); syncAdhanSettings(); });
     $("adPre").addEventListener("click", function (e) { var b = e.target.closest("button"); if (!b) return; state.adhan.pre = +b.dataset.n; save(); syncAdhanSettings(); });
     $("adVoice").addEventListener("click", function (e) { var b = e.target.closest("button"); if (!b) return; state.adhan.voice = +b.dataset.v; save(); syncAdhanSettings(); });
+    $("adVol").addEventListener("click", function (e) { var b = e.target.closest("button"); if (!b) return; state.adhan.vol = +b.dataset.l; adhanAudio.volume = state.adhan.vol / 100; save(); syncAdhanSettings(); });
     $("adTest").addEventListener("click", function () { hideAdhan(); fireAdhan("Dhuhr", false, true); });
   }
   function syncAdhanSettings() {
-    var i, a = state.adhan, on = $("adOn").children, pr = $("adPr").children, pre = $("adPre").children;
+    var i, a = state.adhan, on = $("adOn").children, pr = $("adPr").children, pre = $("adPre").children, vl = $("adVol").children;
+    for (i = 0; i < vl.length; i++) vl[i].setAttribute("aria-pressed", String(+vl[i].dataset.l === a.vol));
     for (i = 0; i < on.length; i++) on[i].setAttribute("aria-pressed", String((on[i].dataset.a === "1") === a.on));
     for (i = 0; i < pr.length; i++) pr[i].setAttribute("aria-pressed", String(!!a.pr[pr[i].dataset.p]));
     for (i = 0; i < pre.length; i++) pre[i].setAttribute("aria-pressed", String(+pre[i].dataset.n === a.pre));
