@@ -690,6 +690,11 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
 :root[data-ui="g"] .app-btn { border-radius: 2rem; background: var(--surface); border: 1.5px solid var(--line); }
 :root[data-ui="g"] .app-btn:focus-visible { outline: .28rem solid #fff; outline-offset: .15rem; transform: none; box-shadow: 0 0 2.4rem rgba(255,255,255,.35); }
 
+
+.q-cols { display: grid; grid-template-columns: 1fr 2fr; gap: 1.4rem; }
+.q-panel { border-radius: 2rem; padding: 1.6rem 1.8rem; background: rgba(255,255,255,.06); border: 1.5px solid rgba(255,255,255,.14); min-height: 26rem; display: flex; flex-direction: column; gap: 1rem; }
+.q-panel h3 { margin: 0; font-family: var(--font-display); font-size: 1.7rem; color: var(--accent); }
+.q-empty { flex: 1; display: grid; place-items: center; border-radius: 1.4rem; border: 1.5px dashed rgba(255,255,255,.2); color: var(--muted); font-size: 1.4rem; }
 :root[data-ui="g"] .view { padding: .6rem 3.2rem 4rem; }
 :root[data-ui="g"] .lib-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1.2rem; }
 :root[data-ui="g"] .lib-grid .tile { min-height: 13rem; height: 13rem; border-radius: 2rem; border: 1.5px solid rgba(255,255,255,.3); }
@@ -706,7 +711,7 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
 <div class="adhan-bar" id="adhanBar" hidden role="status" aria-live="assertive"><div class="adhan-txt"><b id="adhanT"></b><span id="adhanS"></span></div><button type="button" class="btn" id="adhanStop">إيقاف</button></div>
 <div class="wx" id="wx" hidden aria-label="حالة الطقس"><span class="wx-ic" id="wxIc"></span><b id="wxT"></b><span id="wxD"></span><i id="wxC"></i></div>
 <div class="shell" dir="rtl" lang="ar">
-<nav class="tabs" id="tabs" aria-label="الأقسام"><button class="tab" type="button" data-v="home" aria-pressed="true">الرئيسية</button><button class="tab" type="button" data-v="lib" aria-pressed="false">الأدعية والزيارات</button><button class="tab" type="button" data-v="apps" id="tabApps" aria-pressed="false" hidden>التطبيقات</button><button class="tab tab-set" type="button" data-v="set" aria-pressed="false">الإعدادات</button></nav>
+<nav class="tabs" id="tabs" aria-label="الأقسام"><button class="tab" type="button" data-v="home" aria-pressed="true">الرئيسية</button><button class="tab" type="button" data-v="lib" aria-pressed="false">الأدعية والزيارات</button><button class="tab" type="button" data-v="quran" aria-pressed="false">القرآن الكريم</button><button class="tab" type="button" data-v="events" aria-pressed="false">المناسبات</button><button class="tab" type="button" data-v="apps" id="tabApps" aria-pressed="false" hidden>التطبيقات</button><button class="tab tab-set" type="button" data-v="set" aria-pressed="false">الإعدادات</button></nav>
 <div class="app view" id="v-home">
   <section class="now" aria-label="التاريخ والوقت">
     <div class="clk"><div class="greet" id="greet"></div><div class="clock"><span id="time"></span><small id="period"></small></div></div>
@@ -752,6 +757,17 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
 
 
   <section class="view apps" id="v-apps" hidden aria-label="كافة التطبيقات"><div class="view-head"><h2 id="appsTitle">كافة التطبيقات</h2><button type="button" class="btn" id="appsBack">رجوع للرئيسية</button></div><div class="apps-grid" id="appsGrid"></div></section>
+  <section class="view quran" id="v-quran" hidden aria-label="القرآن الكريم">
+    <div class="view-head"><h2>القرآن الكريم</h2><p>اختر القارئ ثم السورة. القرّاء والسور تُضاف هنا مع ملفات الصوت.</p></div>
+    <div class="q-cols">
+      <div class="q-panel"><h3>القرّاء</h3><div class="q-empty">لا يوجد قرّاء بعد</div></div>
+      <div class="q-panel"><h3>السور</h3><div class="q-empty">لا توجد سور بعد</div></div>
+    </div>
+  </section>
+  <section class="view events" id="v-events" hidden aria-label="المناسبات">
+    <div class="view-head"><h2>المناسبات</h2><p>المناسبات القادمة بالتاريخ الهجري والميلادي، وفي كل مناسبة أدعيتها وزياراتها.</p></div>
+    <div class="q-panel"><div class="q-empty">لا توجد مناسبات بعد</div></div>
+  </section>
   <section class="view lib" id="v-lib" hidden aria-label="الأدعية والزيارات">
     <div class="view-head">
       <h2>الأدعية والزيارات</h2>
@@ -1816,7 +1832,7 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
   function showView(v) {
     view = v;
     document.body.classList.toggle("off-home", v !== "home");
-    ["home", "lib", "apps"].forEach(function (n) { $("v-" + n).hidden = n !== v; });
+    ["home", "lib", "apps", "quran", "events"].forEach(function (n) { $("v-" + n).hidden = n !== v; });
     var ts = $("tabs").children;
     for (var i = 0; i < ts.length; i++) ts[i].setAttribute("aria-pressed", String(ts[i].dataset.v === v));
     if (v === "lib") { Object.keys(DUAS).forEach(probe); renderLib(); }
