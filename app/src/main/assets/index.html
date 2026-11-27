@@ -2673,7 +2673,13 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
   function audioBusy() {
     return (!audio.paused && !audio.ended) || (!adhanAudio.paused && !adhanAudio.ended);
   }
+  /* رجعنا للتطبيق من تطبيق ثاني (يوتيوب مثلاً): نبدأ عدّ الخمول من الصفر، وما نشغّل الشاشة وإحنا بالخلفية */
+  window.__tvResume = function () { lastAct = Date.now(); if (saverOn) stopSaver(); };
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) window.__tvResume(); });
+  window.addEventListener("focus", function () { lastAct = Date.now(); });
+  window.addEventListener("pageshow", function () { lastAct = Date.now(); });
   setInterval(function () {
+    if (document.hidden) { lastAct = Date.now(); return; }
     if (saverOn || !state.saver.on) return;
     if (Date.now() - lastAct < state.saver.after * 1000) return;
     if (!$("player").hidden || !$("reader").hidden || !panel.hidden || !$("appMenu").hidden || audioBusy()) return;

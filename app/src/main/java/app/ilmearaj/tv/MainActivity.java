@@ -129,6 +129,7 @@ public class MainActivity extends Activity {
         super.onResume();
         web.onResume();
         web.requestFocus(View.FOCUS_DOWN);
+        web.evaluateJavascript("window.__tvResume && window.__tvResume();", null);
     }
 
     /** زر Home بالريموت وإحنا شغّالين: نرجع لأول الصفحة الرئيسية */
