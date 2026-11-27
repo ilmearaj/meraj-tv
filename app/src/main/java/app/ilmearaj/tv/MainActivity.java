@@ -1,12 +1,14 @@
 package app.ilmearaj.tv;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
@@ -252,6 +254,37 @@ public class MainActivity extends Activity {
             } catch (Exception e) {
                 return false;
             }
+        }
+
+        /** مستوى صوت التلفزيون الحالي (٠–١٠٠). */
+        @JavascriptInterface
+        public int getVol() {
+            try {
+                AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                int max = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                return max <= 0 ? 0 : Math.round(am.getStreamVolume(AudioManager.STREAM_MUSIC) * 100f / max);
+            } catch (Exception e) {
+                return 0;
+            }
+        }
+
+        /** يضبط صوت التلفزيون (٠–١٠٠) — يُستعمل للأذان بمستوى مستقل. */
+        @JavascriptInterface
+        public void setVol(final int pct) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                        int max = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                        int p = Math.max(0, Math.min(100, pct));
+                        int idx = Math.round(max * p / 100f);
+                        if (p > 0 && idx < 1) idx = 1;
+                        am.setStreamVolume(AudioManager.STREAM_MUSIC, idx, 0);
+                    } catch (Exception ignored) {
+                    }
+                }
+            });
         }
 
         @JavascriptInterface
