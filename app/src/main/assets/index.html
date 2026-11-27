@@ -627,7 +627,7 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
 .adhan-lock.vid .al-dots { margin-top: 0; }
 
 /* شكل الواجهة (ز): ذهبي ليلي — المحتوى أولاً، الصفحة تنزل بالريموت */
-:root[data-ui="g"] { --bg: #0F0B1C; --bg2: #0B0818; --accent: #E8C36A; --accent2: #7B5FE8; --fg: #F6F0E2; --muted: #98A2B0; --surface: rgba(255,255,255,.07); --surface2: rgba(255,255,255,.1); --line: rgba(255,255,255,.12); --glow1: rgba(123,95,232,.28); --glow2: rgba(232,195,106,.14); scroll-behavior: smooth; scroll-padding-block: 9rem 6rem; }
+:root[data-ui="g"] { font-size: 0.78vw; --bg: #0F0B1C; --bg2: #0B0818; --accent: #E8C36A; --accent2: #7B5FE8; --fg: #F6F0E2; --muted: #98A2B0; --surface: rgba(255,255,255,.07); --surface2: rgba(255,255,255,.1); --line: rgba(255,255,255,.12); --glow1: rgba(123,95,232,.28); --glow2: rgba(232,195,106,.14); scroll-behavior: smooth; scroll-padding-block: 9rem 6rem; }
 :root[data-ui="g"] body { background: radial-gradient(60% 50% at 10% -5%, rgba(123,95,232,.34), transparent 70%), radial-gradient(45% 45% at 100% 0%, rgba(232,195,106,.10), transparent 70%), linear-gradient(180deg, #0F0B1C, #0B0818); background-attachment: fixed; }
 :root[data-ui="g"] body::before, :root[data-ui="g"] body::after { display: none; }
 :root[data-ui="g"] .app { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); grid-template-rows: none; gap: 1.1rem; padding: .6rem 3.2rem 4rem; align-content: start; }
@@ -700,6 +700,17 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
 :root[data-ui="g"] .sheet button:focus-visible { transform: none; outline: .26rem solid #fff; outline-offset: .12rem; }
 :root[data-ui="g"] .close { background: #EFE9FA; color: #1A1330; border-radius: 99px; padding: .9rem 3rem; font-size: 1.5rem; }
 :root[data-ui="g"] .sheet[data-page="sub"] { grid-template-columns: 1fr 1fr; }
+
+/* شاشة التوقف (ز): ألوان صريحة بدون color-mix، وخط كبير يُقرأ من بعيد */
+:root[data-ui="g"] .saver { background: radial-gradient(60% 55% at 12% -5%, rgba(232,195,106,.30), transparent 70%), radial-gradient(55% 60% at 100% 5%, rgba(123,95,232,.34), transparent 70%), linear-gradient(180deg, #0F0B1C, #0B0818); }
+:root[data-ui="g"] .sv-w.w1 { background: radial-gradient(circle, rgba(232,195,106,.75), transparent 68%); }
+:root[data-ui="g"] .sv-w.w2 { background: radial-gradient(circle, rgba(123,95,232,.8), transparent 68%); }
+:root[data-ui="g"] .sv-w.w3 { background: radial-gradient(circle, rgba(63,58,184,.7), transparent 68%); }
+:root[data-ui="g"] .saver .sv-info { right: 6rem; bottom: 6rem; max-width: 75%; }
+:root[data-ui="g"] .sv-time { font-size: 15rem; }
+:root[data-ui="g"] .sv-time small { font-size: 4rem; }
+:root[data-ui="g"] .sv-date { font-size: 3rem; margin-top: 1rem; }
+:root[data-ui="g"] .sv-txt { font-size: 3.2rem; margin-top: 1.6rem; line-height: 1.7; }
 :root[data-ui="g"] .tab-set { display: block; }
 :root[data-ui="g"] .tab[aria-pressed="true"] { background: #EFE9FA; color: #1A1330; }
 :root[data-ui="g"] .tab:focus-visible { outline: .28rem solid #fff; outline-offset: .1rem; box-shadow: 0 0 2rem rgba(255,255,255,.3); }
@@ -1831,7 +1842,7 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
     var root = document.documentElement;
     root.style.fontSize = "";
     var base = parseFloat(getComputedStyle(root).fontSize) || 16;
-    if (view === "home" && panel.hidden) {
+    if (view === "home" && panel.hidden && document.documentElement.getAttribute("data-ui") !== "g") {
       for (var i = 0; i < 4; i++) {
         var h = window.innerHeight, fs = parseFloat(getComputedStyle(root).fontSize), ha = $("homeApps");
         var sh = Math.max(root.scrollHeight, ha ? ha.getBoundingClientRect().bottom + window.scrollY + fs * 2.4 : 0);
