@@ -131,6 +131,16 @@ public class MainActivity extends Activity {
         web.requestFocus(View.FOCUS_DOWN);
     }
 
+    /** زر Home بالريموت وإحنا شغّالين: نرجع لأول الصفحة الرئيسية */
+    @Override
+    protected void onNewIntent(android.content.Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        if (intent != null && intent.hasCategory(android.content.Intent.CATEGORY_HOME)) {
+            web.evaluateJavascript("window.__tvHome && window.__tvHome();", null);
+        }
+    }
+
     /** زر الرجوع: تغلق الصفحة أعلى شيء مفتوح، وما نخرج من الهوم أبداً. */
     @Override
     public void onBackPressed() {

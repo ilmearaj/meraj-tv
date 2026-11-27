@@ -2168,6 +2168,13 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
     if (view !== "home") { showView("home"); var g = document.querySelector(".happ"); if (g) g.focus(); return true; }
     return false;
   };
+  /* زر Home: يغلق كل شي مفتوح ويرجع للرئيسية (الأذان القافل ما ينفك بـ Home) */
+  window.__tvHome = function () {
+    if (alock.on) return;
+    var n = 0; while (n++ < 12 && window.__tvBack()) {}
+    var g = document.querySelector(".happ"); if (g) g.focus();
+    window.scrollTo(0, 0);
+  };
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" || e.key === "GoBack" || e.key === "BrowserBack") { if (window.__tvBack()) e.preventDefault(); }
   });
