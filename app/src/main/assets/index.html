@@ -372,7 +372,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
 @keyframes svw3 { from { transform: translate(0, 0) scale(1); } 50% { transform: translate(-14vw, -12vh) scale(1.15); } to { transform: translate(12vw, -4vh) scale(.95); } }
 .sv-ripple { position: absolute; inset: -20%; opacity: .3; background: repeating-radial-gradient(circle at 30% 40%, transparent 0 7rem, rgba(255, 255, 255, .045) 7.2rem 7.6rem, transparent 7.8rem 14rem); animation: svrip 40s linear infinite; }
 @keyframes svrip { from { transform: scale(1) rotate(0); } to { transform: scale(1.35) rotate(8deg); } }
-.saver .sv-info { padding: 2rem 3.2rem 2.4rem; border-radius: 3rem; background: linear-gradient(135deg, rgba(255, 255, 255, .17), rgba(255, 255, 255, .05)); border: 1.5px solid rgba(255, 255, 255, .34); backdrop-filter: blur(34px) saturate(1.5); -webkit-backdrop-filter: blur(34px) saturate(1.5); box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, .55), 0 1.6rem 4rem rgba(0, 0, 0, .3); text-shadow: none; }
+.saver .sv-info { padding: 0; background: none; border: 0; backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; text-shadow: 0 .2rem 1.6rem rgba(0, 0, 0, .55); }
 .saver .sv-l { display: none; }
 .saver .sv-txt { display: block !important; }
 .saver[hidden] { display: none; }
@@ -380,7 +380,7 @@ body.off-home .gear, body.off-home .sysbtn, body.off-home .wx { display: none; }
 .sv-l.on { opacity: 1; animation: svzoom 40s ease-in-out infinite alternate; }
 @keyframes svzoom { from { transform: scale(1); } to { transform: scale(1.08); } }
 .sv-info { position: absolute; right: 4rem; bottom: 4rem; max-width: 60%; text-align: right; color: #fff; text-shadow: 0 .2rem 1.2rem rgba(0, 0, 0, .8); transition: right 2s ease, bottom 2s ease, left 2s ease, top 2s ease; }
-.saver.nophoto .sv-info { text-shadow: none; }
+.saver.nophoto .sv-info { text-shadow: 0 .2rem 1.6rem rgba(0, 0, 0, .55); }
 .sv-time { font-family: var(--font-display); font-size: 6rem; line-height: 1; }
 .sv-date { font-size: 1.8rem; opacity: .9; margin-top: .4rem; }
 .sv-txt { font-size: 1.7rem; opacity: .8; margin-top: 1rem; line-height: 1.8; }
@@ -625,6 +625,52 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
 .adhan-lock.vid .al-card b { font-size: 1.6rem; }
 .adhan-lock.vid .al-card p { margin: 0; font-size: 1.2rem; white-space: nowrap; }
 .adhan-lock.vid .al-dots { margin-top: 0; }
+
+/* شكل الواجهة (ز): ذهبي ليلي — المحتوى أولاً، الصفحة تنزل بالريموت */
+:root[data-ui="g"] { --bg: #0F0B1C; --bg2: #0B0818; --accent: #E8C36A; --accent2: #7B5FE8; --fg: #F6F0E2; --muted: #98A2B0; --surface: rgba(255,255,255,.07); --surface2: rgba(255,255,255,.1); --line: rgba(255,255,255,.12); --glow1: rgba(123,95,232,.28); --glow2: rgba(232,195,106,.14); scroll-behavior: smooth; scroll-padding-block: 9rem 6rem; }
+:root[data-ui="g"] body { background: radial-gradient(60% 50% at 10% -5%, rgba(123,95,232,.34), transparent 70%), radial-gradient(45% 45% at 100% 0%, rgba(232,195,106,.10), transparent 70%), linear-gradient(180deg, #0F0B1C, #0B0818); background-attachment: fixed; }
+:root[data-ui="g"] body::before, :root[data-ui="g"] body::after { display: none; }
+:root[data-ui="g"] .app { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); grid-template-rows: none; gap: 1.1rem; padding: .6rem 3.2rem 4rem; align-content: start; }
+:root[data-ui="g"] .events { display: contents; }
+:root[data-ui="g"] .now { grid-column: 1 / -1; grid-row: 1; min-height: 8rem; }
+:root[data-ui="g"] .events .prayers { grid-column: 1 / span 6 !important; grid-row: 2 !important; display: grid !important; grid-template-columns: repeat(6, minmax(0, 1fr)) !important; grid-template-rows: auto !important; gap: .8rem; height: 6.4rem; padding: 0; background: none; border: 0; box-shadow: none; backdrop-filter: none; }
+:root[data-ui="g"] .events .prayers .pr-h { display: none !important; }
+:root[data-ui="g"] .events .prayers .pr-msg { grid-column: 1 / -1; display: grid; place-items: center; border-radius: 1.5rem; background: var(--surface); border: 1px solid var(--line); }
+:root[data-ui="g"] .events .pr { border-radius: 1.5rem; background: var(--surface); border: 1.5px solid var(--line); padding: .2rem .3rem !important; box-shadow: none; backdrop-filter: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; min-height: 0; margin: 0; }
+:root[data-ui="g"] .events .pr b { font-family: var(--font-display); font-size: 1.9rem !important; line-height: 1.1; color: var(--fg); }
+:root[data-ui="g"] .events .pr span { font-size: 1.05rem; color: #C9C2DA; }
+:root[data-ui="g"] .events .pr i { font-size: .85rem; color: var(--muted); font-style: normal; }
+:root[data-ui="g"] .events .pr.dim { opacity: .75; }
+:root[data-ui="g"] .events .pr.next { grid-column: auto !important; grid-row: auto !important; background: #EFE9FA; border-color: #EFE9FA; box-shadow: none; }
+:root[data-ui="g"] .events .pr.next b, :root[data-ui="g"] .events .pr.next span, :root[data-ui="g"] .events .pr.next i { color: #1A1330; }
+:root[data-ui="g"] .events > .next { grid-column: 7 / -1 !important; grid-row: 2 !important; height: 6.4rem; min-height: 0 !important; padding: 0 1.4rem !important; border-radius: 1.5rem; background: linear-gradient(135deg, rgba(232,81,95,.25), rgba(123,63,228,.25)); border: 1.5px solid rgba(244,200,106,.5); backdrop-filter: none; box-shadow: none; align-content: center; gap: 0 1.2rem; }
+:root[data-ui="g"] .next .next-name { font-size: 1.55rem !important; }
+:root[data-ui="g"] .next .next-date { font-size: 1rem; }
+:root[data-ui="g"] .next .label { color: #5FD3B0; font-size: 1rem; }
+:root[data-ui="g"] .next .list { display: none !important; }
+:root[data-ui="g"] .events .countdown { width: 4.6rem; height: 4.6rem; }
+:root[data-ui="g"] .events .ring-n b { font-size: 1.5rem; }
+:root[data-ui="g"] .events .pin { grid-column: 1 / span 5 !important; grid-row: 3 !important; height: 35rem; min-height: 35rem; border-radius: 2.3rem; border: 3px solid rgba(239,233,250,.55); }
+:root[data-ui="g"] .events .pin b { font-size: 4rem; }
+:root[data-ui="g"] .events .pin span:not(.ic) { font-size: 1.3rem; }
+:root[data-ui="g"] .events .picks { display: contents; }
+:root[data-ui="g"] .dhikr { grid-column: 6 / -1; grid-row: 3; height: 35rem; border-radius: 2.3rem; padding: 2.6rem 2.8rem 3rem; display: flex; flex-direction: column; justify-content: center; gap: 1.1rem; background: linear-gradient(135deg, #1B2A6E, #3A3FB8 55%, #7B5FE8); border: 2px solid rgba(255,255,255,.14); backdrop-filter: none; box-shadow: none; }
+:root[data-ui="g"] .dhikr-top { display: flex; justify-content: flex-start; gap: .8rem; }
+:root[data-ui="g"] .dhikr .chip { background: rgba(255,255,255,.18); color: #EFE9FA; }
+:root[data-ui="g"] .dhikr-note { display: block; color: #D9D3F2; }
+:root[data-ui="g"] .dhikr .orn { display: none; }
+:root[data-ui="g"] .dhikr-text { font-size: 3.3rem; line-height: 1.6; -webkit-line-clamp: 5; text-align: start; justify-content: flex-start; color: #fff; }
+:root[data-ui="g"] .dhikr-text.long { font-size: 2.6rem; }
+:root[data-ui="g"] .dhikr .occ-in { color: #D9D3F2; font-size: 1.3rem; }
+:root[data-ui="g"] .dhikr .bar { position: absolute; left: 0; right: 0; bottom: 0; height: .3rem; background: rgba(255,255,255,.14); }
+:root[data-ui="g"] .homeapps { grid-column: 1 / -1; grid-row: 4; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 1.4rem; margin-top: .6rem; }
+:root[data-ui="g"] .homeapps .picks .tile { height: 11rem; min-height: 11rem; border-radius: 2rem; border: 1.5px solid rgba(255,255,255,.3); }
+:root[data-ui="g"] .homeapps .happ { flex-direction: column; gap: .6rem; height: 11rem; min-height: 11rem; border-radius: 2rem; border: 1.5px solid color-mix(in srgb, var(--c, #E8C36A) 40%, rgba(255,255,255,.4)); background: linear-gradient(135deg, color-mix(in srgb, var(--c, #E8C36A) 52%, rgba(255,255,255,.05)), color-mix(in srgb, var(--c, #E8C36A) 18%, rgba(255,255,255,.03))); backdrop-filter: none; box-shadow: none; font-size: 1.5rem; }
+:root[data-ui="g"] .happ:focus-visible, :root[data-ui="g"] .tile:focus-visible { transform: none; outline: .28rem solid #fff; outline-offset: .15rem; box-shadow: 0 0 2.4rem rgba(255,255,255,.35); z-index: 2; }
+:root[data-ui="g"] .gear, :root[data-ui="g"] .wx, :root[data-ui="g"] .sysbtn { background: rgba(255,255,255,.08); border: 1.5px solid rgba(255,255,255,.2); backdrop-filter: none; }
+:root[data-ui="g"] .btn { border-radius: 99px; background: rgba(255,255,255,.12); color: var(--fg); border: 1px solid rgba(255,255,255,.35); }
+:root[data-ui="g"] .btn:focus-visible { background: #EFE9FA; color: #1A1330; outline: none; }
+:root[data-ui="g"] .badge { background: #F4C86A; color: #2b1d02; }
 </style>
 </head>
 <body>
@@ -734,7 +780,7 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
     <h2 id="panelTitle">تخصيص الشاشة</h2>
     <div>
       <h3>شكل الأزرار والأيقونات</h3>
-      <div class="seg" id="uiSeg"><button type="button" data-u="">١ الحالي (دائري)</button><button type="button" data-u="b">٢ زخرفي ذهبي</button><button type="button" data-u="c">٣ زجاجي</button><button type="button" data-u="d">٤ مسطّح جريء</button><button type="button" data-u="e">٥ محراب</button><button type="button" data-u="f">٦ سائل</button></div>
+      <div class="seg" id="uiSeg"><button type="button" data-u="">١ الحالي (دائري)</button><button type="button" data-u="b">٢ زخرفي ذهبي</button><button type="button" data-u="c">٣ زجاجي</button><button type="button" data-u="d">٤ مسطّح جريء</button><button type="button" data-u="e">٥ محراب</button><button type="button" data-u="f">٦ سائل</button><button type="button" data-u="g">٧ ذهبي ليلي</button></div>
     </div>
     <div>
       <h3>اللون</h3>
@@ -921,11 +967,11 @@ body:has(#player:not([hidden])) .reader { padding-bottom: 17rem; }
     ["green", "زمردي", "#4fd1a5"], ["blue", "أزرق", "#6ea8ff"], ["maroon", "عنابي", "#e0707f"],
     ["violet", "بنفسجي", "#b69cff"], ["gold", "ذهبي", "#e3b54a"], ["light", "فاتح", "#ffffff"]
   ];
-  var state = { navSound: true, ptune: { Fajr: 0, Sunrise: 0, Dhuhr: 0, Maghrib: 0, Isha: 0, Midnight: 0 }, palette: "green", ui: "f", uiv: 2, locAuto: true, geo: null, offset: 0, auto: { sabah: true, nudba: true, kumayl: false }, morning: 360, night: 1200, rotate: true, voice: {}, start: "home", liveSound: false, readWith: true, loc: { c: "KW", i: 0 }, pmethod: "jafari", adhan: { vol: 30, on: true, voice: 0, pr: { Fajr: false, Dhuhr: true, Maghrib: true, Isha: true }, pre: 0 }, rfont: 2.6, rspeed: 24, homeApps: null, speed: 1, saver: { on: true, after: 300, every: 30 }, bg: { mode: "fixed", every: 60 } };
+  var state = { navSound: true, ptune: { Fajr: 0, Sunrise: 0, Dhuhr: 0, Maghrib: 0, Isha: 0, Midnight: 0 }, palette: "green", ui: "g", uiv: 3, locAuto: true, geo: null, offset: 0, auto: { sabah: true, nudba: true, kumayl: false }, morning: 360, night: 1200, rotate: true, voice: {}, start: "home", liveSound: false, readWith: true, loc: { c: "KW", i: 0 }, pmethod: "jafari", adhan: { vol: 30, on: true, voice: 0, pr: { Fajr: false, Dhuhr: true, Maghrib: true, Isha: true }, pre: 0 }, rfont: 2.6, rspeed: 24, homeApps: null, speed: 1, saver: { on: true, after: 300, every: 30 }, bg: { mode: "fixed", every: 60 } };
   try {
     var saved = JSON.parse(localStorage.getItem("tv-hijri") || "{}");
     if (saved.palette) state.palette = saved.palette;
-    if (saved.uiv === 2 && typeof saved.ui === "string" && /^[bcdef]?$/.test(saved.ui)) state.ui = saved.ui;
+    if (saved.uiv === 3 && typeof saved.ui === "string" && /^[bcdefg]?$/.test(saved.ui)) state.ui = saved.ui;
     if (saved.ptune) for (var tk in state.ptune) if (typeof saved.ptune[tk] === "number" && Math.abs(saved.ptune[tk]) <= 30) state.ptune[tk] = Math.round(saved.ptune[tk]);
     if (typeof saved.offset === "number") state.offset = saved.offset;
     if (saved.auto) for (var ak in state.auto) if (typeof saved.auto[ak] === "boolean") state.auto[ak] = saved.auto[ak];
